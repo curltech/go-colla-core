@@ -3,7 +3,7 @@ module github.com/curltech/go-colla-core
 go 1.15
 
 require (
-	github.com/360EntSecGroup-Skylar/excelize v1.4.1 // indirect
+	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/Joker/hpp v1.0.0 // indirect
 	github.com/ProtonMail/gopenpgp/v2 v2.0.1
 	github.com/allegro/bigcache v1.2.1
