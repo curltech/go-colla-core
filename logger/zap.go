@@ -83,8 +83,14 @@ func init() {
 	// 开启文件及行号
 	development := zap.Development()
 	// 设置初始化字段
-	filed := zap.Fields(zap.String("serviceName", "serviceName"))
+	fs := make([]zap.Field, 0)
+	serviceName, _ := config.GetString("log.serviceName")
+	if serviceName != "" {
+		field := zap.String("serviceName", serviceName)
+		fs = append(fs, field)
+	}
+	fields := zap.Fields(fs...)
 	// 构造日志
-	logger = zap.New(core, caller, development, filed)
+	logger = zap.New(core, caller, development, fields)
 	sugarLogger = logger.Sugar()
 }
