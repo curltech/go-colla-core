@@ -4,14 +4,13 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/curltech/go-colla-core/config"
-	_ "github.com/curltech/go-colla-core/log"
 	"github.com/curltech/go-colla-core/logger"
 	"github.com/curltech/go-colla-core/repository"
 	"github.com/curltech/go-colla-core/util/reflect"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	gormlogger "gorm.io/gorm/logger"
 	goreflect "reflect"
 	"time"
 )
@@ -44,7 +43,7 @@ func init() {
 	dsn := fmt.Sprintf("host=%v port=%v dbname=%v user=%v password=%v sslmode=%v", host, port, dbname, user, password, sslmode)
 	var err error
 	engine, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: gormlogger.Default.LogMode(gormlogger.Info),
 	})
 	if err != nil {
 		panic("failed to connect database")
@@ -261,11 +260,11 @@ func (this *GormSession) Transaction(fc func(s repository.DbSession) error) {
 	}
 	defer func() {
 		if p := recover(); p != nil {
-			logger.Error("recover rollback:%s\r\n", p)
+			logger.Errorf("recover rollback:%s\r\n", p)
 			session.Rollback()
 			panic(p) // re-throw panic after Rollback
 		} else if session.Error != nil {
-			logger.Error("error rollback:%s\r\n", session.Error)
+			logger.Errorf("error rollback:%s\r\n", session.Error)
 			session.Rollback() // err is non-nil; don't change it
 		} else {
 			session = session.Commit() // err is nil; if Commit returns error update err
