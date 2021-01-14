@@ -4,7 +4,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/curltech/go-colla-core/logger"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"path/filepath"
@@ -59,9 +58,9 @@ var appName string
 func GetAppName() string {
 	if appName == "" {
 		appName = "app"
-		logger.Errorf("No AppName, will be set:%v", appName)
+		fmt.Errorf("No AppName, will be set:%v", appName)
 	} else {
-		logger.Infof("AppName is:%v", appName)
+		fmt.Printf("AppName is:%v", appName)
 	}
 
 	return appName
@@ -71,7 +70,7 @@ func init() {
 	appname := flag.String("appname", "", "app name(default app)")
 	flag.Parse()
 	if len(*appname) == 0 {
-		logger.Errorf("'appname' is required")
+		fmt.Errorf("'appname' is required")
 		panic("'appname' is required")
 	} else {
 		appName = *appname
@@ -81,7 +80,7 @@ func init() {
 	parseYAML(prefix + defaultappname + suffix)
 	files, err := ioutil.ReadDir(prefix)
 	if err != nil {
-		logger.Errorf("%v path is not exist:%v", prefix, err)
+		fmt.Errorf("%v path is not exist:%v", prefix, err)
 	}
 	//读取各应用的单独配置
 	for _, file := range files {
@@ -108,9 +107,9 @@ func Get(name string) (interface{}, error) {
 func get(name string, appname string) (interface{}, error) {
 	data, ok := confs[appname]
 	if !ok {
-		logger.Errorf("app conf is not exist:%v", appname)
+		fmt.Errorf("app conf is not exist:%v", appname)
 		if appname == defaultappname {
-			logger.Errorf("default app conf is not exist:%v", defaultappname)
+			fmt.Errorf("default app conf is not exist:%v", defaultappname)
 			panic(defaultappname)
 		}
 
