@@ -5,7 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"github.com/kataras/golog"
+	"github.com/curltech/go-colla-core/logger"
 	"io"
 	"net/http"
 	"net/url"
@@ -184,7 +184,7 @@ func (this *SessionManager) Start(w http.ResponseWriter, r *http.Request) (sessi
 	cookie, err := r.Cookie(this.cookieName)
 	if err != nil || cookie.Value == "" {
 		sid := this.sessionId()
-		golog.Infof("New session:%v", sid)
+		logger.Infof("New session:%v", sid)
 		session, _ = this.sessionPool.Init(sid)
 		cookie := http.Cookie{
 			Name:     this.cookieName,
@@ -196,7 +196,7 @@ func (this *SessionManager) Start(w http.ResponseWriter, r *http.Request) (sessi
 		http.SetCookie(w, &cookie) //将新的cookie设置到响应中
 	} else {
 		sid, _ := url.QueryUnescape(cookie.Value)
-		golog.Infof("Get old session:%v", sid)
+		logger.Infof("Get old session:%v", sid)
 		session, _ = this.sessionPool.Read(sid)
 	}
 	return

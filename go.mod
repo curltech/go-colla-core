@@ -75,7 +75,6 @@ require (
 	github.com/jmhodges/levigo v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.10
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
-	github.com/kataras/golog v0.1.5
 	github.com/kataras/iris v0.0.2 // indirect
 	github.com/kataras/iris/v12 v12.2.0-alpha.0.20201113181155-4d09475c290d
 	github.com/kataras/jwt v0.0.5 // indirect

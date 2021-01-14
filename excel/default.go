@@ -2,8 +2,8 @@ package excel
 
 import (
 	"errors"
+	"github.com/curltech/go-colla-core/logger"
 	utilreflect "github.com/curltech/go-colla-core/util/reflect"
-	"github.com/kataras/golog"
 	"reflect"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
@@ -12,7 +12,7 @@ import (
 func Read(filename string, rowsSlicePtrs ...interface{}) error {
 	xlsx, err := excelize.OpenFile(filename)
 	if err != nil {
-		golog.Errorf("filename:%v can't open", filename)
+		logger.Errorf("filename:%v can't open", filename)
 		return err
 	}
 	count := xlsx.SheetCount
@@ -56,7 +56,7 @@ func Read(filename string, rowsSlicePtrs ...interface{}) error {
 				fieldname := head[j]
 				err := utilreflect.Set(value, fieldname, row[j])
 				if err != nil {
-					golog.Errorf("sheetname:%v,row:%v,col:%v,fieldname:%v can't set value:%v", sheetname, i, j, fieldname, value)
+					logger.Errorf("sheetname:%v,row:%v,col:%v,fieldname:%v can't set value:%v", sheetname, i, j, fieldname, value)
 					continue
 				}
 			}

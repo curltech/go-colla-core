@@ -9,9 +9,9 @@ import (
 	blevequery "github.com/blevesearch/bleve/search/query"
 	"github.com/curltech/go-colla-core/config"
 	baseentity "github.com/curltech/go-colla-core/entity"
+	"github.com/curltech/go-colla-core/logger"
 	"github.com/curltech/go-colla-core/util/collection"
 	"github.com/curltech/go-colla-core/util/reflect"
-	"github.com/kataras/golog"
 	"github.com/ttys3/gojieba-bleve"
 	"github.com/yanyiwu/gojieba"
 	"os"
@@ -107,7 +107,7 @@ func (this *bleveSession) Get(indexName string, id string) (map[string]interface
 		for _, field := range doc.Fields {
 			result[field.Name()] = (string)(field.Value())
 		}
-		golog.Infof("%v", result)
+		logger.Infof("%v", result)
 
 		return result, nil
 	}
@@ -140,7 +140,7 @@ func (this *bleveSession) query(indexName string, q blevequery.Query, from int, 
 	if err != nil {
 		return nil, err
 	}
-	golog.Infof("%v", searchResults)
+	logger.Infof("%v", searchResults)
 	result := this.response(searchResults)
 
 	return result, nil
@@ -158,7 +158,7 @@ func (this *bleveSession) Index(indexName string, mds ...interface{}) error {
 		id := fmt.Sprintf("%v", v)
 		err := batch.Index(fmt.Sprintf("%v", id), md)
 		if err != nil {
-			golog.Errorf("%v", err)
+			logger.Errorf("%v", err)
 		}
 	}
 	err = this.indexes[indexName].Batch(batch)

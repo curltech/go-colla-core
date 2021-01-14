@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/curltech/go-colla-core/config"
-	_ "github.com/curltech/go-colla-core/log"
+	"github.com/curltech/go-colla-core/logger"
+	_ "github.com/curltech/go-colla-core/logger"
 	"github.com/curltech/go-colla-core/repository"
 	"github.com/curltech/go-colla-core/util/reflect"
-	"github.com/kataras/golog"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	goreflect "reflect"
@@ -117,7 +117,7 @@ func NewXormSession() repository.DbSession {
 func (this *XormSession) Sync(bean ...interface{}) {
 	err := engine.Sync2(bean...)
 	if err != nil {
-		golog.Errorf("%v", err)
+		logger.Errorf("%v", err)
 	}
 }
 
@@ -329,11 +329,11 @@ func (this *XormSession) Transaction(fc func(s repository.DbSession) error) {
 	}
 	defer func() {
 		if p := recover(); p != nil {
-			golog.Error("recover rollback:%s\r\n", p)
+			logger.Errorf("recover rollback:%s\r\n", p)
 			this.Session.Rollback()
 			panic(p) // re-throw panic after Rollback
 		} else if err != nil {
-			golog.Error("error rollback:%s\r\n", err)
+			logger.Errorf("error rollback:%s\r\n", err)
 			this.Session.Rollback() // err is non-nil; don't change it
 		} else {
 			err = this.Session.Commit() // err is nil; if Commit returns error update err

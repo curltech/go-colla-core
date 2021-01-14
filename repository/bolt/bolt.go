@@ -6,10 +6,10 @@ import (
 	"github.com/boltdb/bolt"
 	baseentity "github.com/curltech/go-colla-core/entity"
 	_ "github.com/curltech/go-colla-core/log"
+	"github.com/curltech/go-colla-core/logger"
 	"github.com/curltech/go-colla-core/repository"
 	"github.com/curltech/go-colla-core/util/message"
 	"github.com/curltech/go-colla-core/util/reflect"
-	"github.com/kataras/golog"
 	_ "github.com/lib/pq"
 	goreflect "reflect"
 	"time"
@@ -26,7 +26,7 @@ func init() {
 	var err error
 	boltdb, err = bolt.Open("mydb.db", 0600, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
-		golog.Errorf("open bolt db:%v", err)
+		logger.Errorf("open bolt db:%v", err)
 	}
 }
 
@@ -226,11 +226,11 @@ func (this *BoltSession) Transaction(fc func(s repository.DbSession) error) {
 	}
 	defer func() {
 		if p := recover(); p != nil {
-			golog.Error("recover rollback:%s\r\n", p)
+			logger.Error("recover rollback:%s\r\n", p)
 			tx.Rollback()
 			panic(p) // re-throw panic after Rollback
 		} else if err != nil {
-			golog.Error("error rollback:%s\r\n", err)
+			logger.Error("error rollback:%s\r\n", err)
 			tx.Rollback() // err is non-nil; don't change it
 		} else {
 			err = tx.Commit() // err is nil; if Commit returns error update err

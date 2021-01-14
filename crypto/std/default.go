@@ -16,9 +16,9 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/pem"
+	"github.com/curltech/go-colla-core/logger"
 	"github.com/curltech/go-colla-core/util/security"
 	ecies "github.com/ethereum/go-ethereum/crypto/ecies"
-	"github.com/kataras/golog"
 	"golang.org/x/crypto/ed25519"
 	"hash"
 	"io"
@@ -310,7 +310,7 @@ func Encrypt(publicKey interface{}, plaintext []byte) []byte {
 	}
 	pub_, ok := publicKey.(*ed25519.PublicKey)
 	if ok {
-		golog.Errorf("NotSupport:%v", pub_)
+		logger.Errorf("NotSupport:%v", pub_)
 	}
 
 	return nil
@@ -336,7 +336,7 @@ func Decrypt(privateKey interface{}, ciphertext []byte) []byte {
 	}
 	priv_, ok := privateKey.(*ed25519.PrivateKey)
 	if ok {
-		golog.Errorf("NotSupport:%v", priv_)
+		logger.Errorf("NotSupport:%v", priv_)
 	}
 
 	return nil

@@ -1,7 +1,7 @@
 package container
 
 import (
-	"github.com/kataras/golog"
+	"github.com/curltech/go-colla-core/logger"
 )
 
 var controllerContainer = make(map[string]interface{})
@@ -23,9 +23,9 @@ func Regist(typ string, name string, beanPtr interface{}) {
 	_, ok := c[name]
 	if !ok {
 		c[name] = beanPtr
-		golog.Infof("bean:%v registed", name)
+		logger.Infof("bean:%v registed", name)
 	} else {
-		golog.Warnf("bean:%v exist", name)
+		logger.Warnf("bean:%v exist", name)
 	}
 }
 

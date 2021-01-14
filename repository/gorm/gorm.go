@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/curltech/go-colla-core/config"
 	_ "github.com/curltech/go-colla-core/log"
+	"github.com/curltech/go-colla-core/logger"
 	"github.com/curltech/go-colla-core/repository"
 	"github.com/curltech/go-colla-core/util/reflect"
-	"github.com/kataras/golog"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -68,7 +68,7 @@ func NewGormSession() repository.DbSession {
 func (this *GormSession) Sync(bean ...interface{}) {
 	err := engine.AutoMigrate(bean...)
 	if err != nil {
-		golog.Errorf("%v", err)
+		logger.Errorf("%v", err)
 	}
 }
 
@@ -261,11 +261,11 @@ func (this *GormSession) Transaction(fc func(s repository.DbSession) error) {
 	}
 	defer func() {
 		if p := recover(); p != nil {
-			golog.Error("recover rollback:%s\r\n", p)
+			logger.Error("recover rollback:%s\r\n", p)
 			session.Rollback()
 			panic(p) // re-throw panic after Rollback
 		} else if session.Error != nil {
-			golog.Error("error rollback:%s\r\n", session.Error)
+			logger.Error("error rollback:%s\r\n", session.Error)
 			session.Rollback() // err is non-nil; don't change it
 		} else {
 			session = session.Commit() // err is nil; if Commit returns error update err

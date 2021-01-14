@@ -3,9 +3,9 @@ package service
 import (
 	"database/sql"
 	"github.com/curltech/go-colla-core/config"
+	"github.com/curltech/go-colla-core/logger"
 	"github.com/curltech/go-colla-core/repository"
 	"github.com/curltech/go-colla-core/util/collection"
-	"github.com/kataras/golog"
 	"strconv"
 )
 
@@ -58,7 +58,7 @@ func GetSeq(name string, count int) []uint64 {
 	}
 	idCache, ok := idCaches[name]
 	if !ok {
-		golog.Errorf("seqname:%v no regist", name)
+		logger.Errorf("seqname:%v no regist", name)
 		panic("SeqNotRegist")
 	}
 	ids, c := enough(name, count)
@@ -86,7 +86,7 @@ func GetSeq(name string, count int) []uint64 {
 							ids[c] = (j + base)
 							c++
 						} else {
-							golog.Warnf("")
+							logger.Warnf("")
 						}
 					} else {
 						idCache.queue.Push(j + base)

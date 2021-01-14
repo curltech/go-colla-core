@@ -7,13 +7,13 @@ import (
 	"github.com/curltech/go-colla-core/config"
 	baseentity "github.com/curltech/go-colla-core/entity"
 	"github.com/curltech/go-colla-core/excel"
+	"github.com/curltech/go-colla-core/logger"
 	"github.com/curltech/go-colla-core/repository"
 	"github.com/curltech/go-colla-core/repository/gorm"
 	"github.com/curltech/go-colla-core/repository/xorm"
 	"github.com/curltech/go-colla-core/util/debug"
 	"github.com/curltech/go-colla-core/util/reflect"
 	"github.com/curltech/go-colla-core/util/security"
-	"github.com/kataras/golog"
 	"strconv"
 	"strings"
 )
@@ -55,11 +55,11 @@ func GetSeqValue(name string) uint64 {
 			if err != nil {
 				panic(err)
 			}
-			golog.Infof("from sequence %v get id %v", name, i64)
+			logger.Infof("from sequence %v get id %v", name, i64)
 
 			return i64
 		} else {
-			golog.Errorf("no query result")
+			logger.Errorf("no query result")
 		}
 	}
 	return 0
@@ -332,11 +332,11 @@ func (this *OrmBaseService) Transaction(fc func(s repository.DbSession) (interfa
 	var err error
 	defer func() {
 		if p := recover(); p != nil {
-			golog.Errorf("recover rollback:%s\r\n", p)
+			logger.Errorf("recover rollback:%s\r\n", p)
 			session.Rollback()
 			//panic(p) // re-throw panic after Rollback
 		} else if err != nil {
-			golog.Errorf("error rollback:%s\r\n", err)
+			logger.Errorf("error rollback:%s\r\n", err)
 			session.Rollback() // err is non-nil; don't change it
 		} else {
 			session.Commit() // err is nil; if Commit returns error update err
@@ -345,7 +345,7 @@ func (this *OrmBaseService) Transaction(fc func(s repository.DbSession) (interfa
 	// 执行在事务内的处理
 	result, err := fc(session)
 	if err != nil {
-		golog.Errorf("Exception:%v", err)
+		logger.Errorf("Exception:%v", err)
 	}
 
 	return result, err
