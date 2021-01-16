@@ -46,6 +46,7 @@ require (
 	github.com/google/uuid v1.1.2 // indirect
 	github.com/googollee/go-socket.io v1.4.4 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/hashicorp/raft v1.2.0
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/hyperjumptech/grule-rule-engine v1.6.2 // indirect
 	github.com/ipfs/go-cid v0.0.7 // indirect
@@ -76,7 +77,7 @@ require (
 	github.com/json-iterator/go v1.1.10
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kataras/iris v0.0.2 // indirect
-	github.com/kataras/iris/v12 v12.2.0-alpha.0.20201113181155-4d09475c290d
+	github.com/kataras/iris/v12 v12.2.0-alpha.0.20201113181155-4d09475c290d // indirect
 	github.com/kataras/jwt v0.0.5 // indirect
 	github.com/kataras/neffos v0.0.16 // indirect
 	github.com/lib/pq v1.8.0
