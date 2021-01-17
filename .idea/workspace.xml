@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cc1cf7e7-837a-4124-8d3a-5e500e0dd1a0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/consensus/raft/default.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/repository/rqlite/default.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crypto/libp2p/default.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/parameter.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/parameter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/consensus/raft/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/consensus/raft/default.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
     </list>

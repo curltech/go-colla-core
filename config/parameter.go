@@ -53,6 +53,48 @@ type searchParams struct {
 	Mode                  string
 }
 
+type rqliteParams struct {
+	HttpAddr               string
+	HttpAdv                string
+	AuthFile               string
+	X509CACert             string
+	X509Cert               string
+	X509Key                string
+	NodeEncrypt            bool
+	NodeX509CACert         string
+	NodeX509Cert           string
+	NodeX509Key            string
+	NodeID                 string
+	RaftAddr               string
+	RaftAdv                string
+	JoinAddr               string
+	JoinAttempts           int
+	JoinInterval           string
+	NoVerify               bool
+	NoNodeVerify           bool
+	DiscoURL               string
+	DiscoID                string
+	Expvar                 bool
+	PprofEnabled           bool
+	Dsn                    string
+	OnDisk                 bool
+	RaftLogLevel           string
+	RaftNonVoter           bool
+	RaftSnapThreshold      uint64
+	RaftSnapInterval       string
+	RaftLeaderLeaseTimeout string
+	RaftHeartbeatTimeout   string
+	RaftElectionTimeout    string
+	RaftApplyTimeout       string
+	RaftOpenTimeout        string
+	RaftShutdownOnRemove   bool
+	CompressionSize        int
+	CompressionBatch       int
+	ShowVersion            bool
+	CpuProfile             string
+	MemProfile             string
+}
+
 type libp2pParams struct {
 	Enable                   bool
 	Topic                    string
@@ -190,6 +232,8 @@ var DatabaseParams = databaseParams{}
 
 var SearchParams = searchParams{}
 
+var RqliteParams = rqliteParams{}
+
 var P2pParams = p2pParams{}
 
 var Libp2pParams = libp2pParams{}
@@ -323,6 +367,46 @@ func init() {
 	SearchParams.NumWorkers, _ = GetInt("search.indexer.numWorkers", 5)
 	SearchParams.FlushBytes, _ = GetInt("search.indexer.flushBytes", 1024*8)
 	SearchParams.FlushInterval, _ = GetInt("search.indexer.flushInterval", 30)
+
+	RqliteParams.NodeID, _ = GetString("node-id", "", "Unique name for node. If not set, set to hostname")
+	RqliteParams.HttpAddr, _ = GetString("http-addr", "localhost:4001", "HTTP server bind address. For HTTPS, set X.509 cert and key")
+	RqliteParams.HttpAdv, _ = GetString("http-adv-addr", "", "Advertised HTTP address. If not set, same as HTTP server")
+	RqliteParams.X509CACert, _ = GetString("http-ca-cert", "", "Path to root X.509 certificate for HTTP endpoint")
+	RqliteParams.X509Cert, _ = GetString("http-cert", "", "Path to X.509 certificate for HTTP endpoint")
+	RqliteParams.X509Key, _ = GetString("http-key", "", "Path to X.509 private key for HTTP endpoint")
+	RqliteParams.NoVerify, _ = GetBool("http-no-verify", false)
+	RqliteParams.NodeEncrypt, _ = GetBool("node-encrypt", false)
+	RqliteParams.NodeX509CACert, _ = GetString("node-ca-cert", "", "Path to root X.509 certificate for node-to-node encryption")
+	RqliteParams.NodeX509Cert, _ = GetString("node-cert", "cert.pem", "Path to X.509 certificate for node-to-node encryption")
+	RqliteParams.NodeX509Key, _ = GetString("node-key", "key.pem", "Path to X.509 private key for node-to-node encryption")
+	RqliteParams.NoNodeVerify, _ = GetBool("node-no-verify", false)
+	RqliteParams.AuthFile, _ = GetString("auth", "", "Path to authentication and authorization file. If not set, not enabled")
+	RqliteParams.RaftAddr, _ = GetString("raft-addr", "localhost:4002", "Raft communication bind address")
+	RqliteParams.RaftAdv, _ = GetString("raft-adv-addr", "", "Advertised Raft communication address. If not set, same as Raft bind")
+	RqliteParams.JoinAddr, _ = GetString("join", "", "Comma-delimited list of nodes, through which a cluster can be joined (proto://host:port)")
+	RqliteParams.JoinAttempts, _ = GetInt("join-attempts", 5)
+	RqliteParams.JoinInterval, _ = GetString("join-interval", "5s", "Period between join attempts")
+	RqliteParams.DiscoURL, _ = GetString("disco-url", "http://discovery.rqlite.com", "Set Discovery Service URL")
+	RqliteParams.DiscoID, _ = GetString("disco-id", "", "Set Discovery ID. If not set, Discovery Service not used")
+	RqliteParams.Expvar, _ = GetBool("expvar", true)
+	RqliteParams.PprofEnabled, _ = GetBool("pprof", true)
+	RqliteParams.Dsn, _ = GetString("dsn", "", `SQLite DSN parameters. E.g. "cache=shared&mode=memory"`)
+	RqliteParams.OnDisk, _ = GetBool("on-disk", false)
+	RqliteParams.ShowVersion, _ = GetBool("version", false)
+	RqliteParams.RaftNonVoter, _ = GetBool("raft-non-voter", false)
+	RqliteParams.RaftHeartbeatTimeout, _ = GetString("raft-timeout", "1s", "Raft heartbeat timeout")
+	RqliteParams.RaftElectionTimeout, _ = GetString("raft-election-timeout", "1s", "Raft election timeout")
+	RqliteParams.RaftApplyTimeout, _ = GetString("raft-apply-timeout", "10s", "Raft apply timeout")
+	RqliteParams.RaftOpenTimeout, _ = GetString("raft-open-timeout", "120s", "Time for initial Raft logs to be applied. Use 0s duration to skip wait")
+	RqliteParams.RaftSnapThreshold, _ = GetUint64("raft-snap", 8192)
+	RqliteParams.RaftSnapInterval, _ = GetString("raft-snap-int", "30s", "Snapshot threshold check interval")
+	RqliteParams.RaftLeaderLeaseTimeout, _ = GetString("raft-leader-lease-timeout", "0s", "Raft leader lease timeout. Use 0s for Raft default")
+	RqliteParams.RaftShutdownOnRemove, _ = GetBool("raft-remove-shutdown", false)
+	RqliteParams.RaftLogLevel, _ = GetString("raft-log-level", "INFO", "Minimum log level for Raft module")
+	RqliteParams.CompressionSize, _ = GetInt("compression-size", 150)
+	RqliteParams.CompressionBatch, _ = GetInt("compression-batch", 5)
+	RqliteParams.CpuProfile, _ = GetString("cpu-profile", "", "Path to file for CPU profiling information")
+	RqliteParams.MemProfile, _ = GetString("mem-profile", "", "Path to file for memory profiling information")
 
 	ServerWebsocketParams.Mode, _ = GetString("server.websocket.mode", "iris")
 	ServerWebsocketParams.Address, _ = GetString("server.websocket.address", ":9090")
