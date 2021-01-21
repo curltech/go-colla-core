@@ -224,6 +224,22 @@ type sfuParams struct {
 	Credentials         []string
 }
 
+type smtpServerParams struct {
+	Enable          bool
+	Addr            string
+	Domain          string
+	ReadTimeout     int64
+	WriteTimeout    int64
+	MaxMessageBytes uint64
+	MaxRecipients   int
+}
+
+type imapServerParams struct {
+	Enable bool
+	Addr   string
+	Domain string
+}
+
 var AppParams = appParams{}
 
 var ServerWebsocketParams = serverWebsocketParams{}
@@ -251,6 +267,10 @@ var RbacParams = rbacParams{}
 var TurnParams = turnParams{}
 
 var SfuParams = sfuParams{}
+
+var SmtpServerParams = smtpServerParams{}
+
+var ImapServerParams = imapServerParams{}
 
 func init() {
 	AppParams.Enable, _ = GetBool("app.enable", true)
@@ -496,4 +516,16 @@ func init() {
 			}
 		}
 	}
+
+	SmtpServerParams.Enable, _ = GetBool("mail.server.smtp.enable", false)
+	SmtpServerParams.Addr, _ = GetString("mail.server.smtp.addr", ":1025")
+	SmtpServerParams.Domain, _ = GetString("mail.server.smtp.domain", "localhost")
+	SmtpServerParams.ReadTimeout, _ = GetInt64("mail.server.smtp.readTimeout", 10*int64(time.Second))
+	SmtpServerParams.WriteTimeout, _ = GetInt64("mail.server.smtp.writeTimeout", 10*int64(time.Second))
+	SmtpServerParams.MaxMessageBytes, _ = GetUint64("mail.server.smtp.maxMessageBytes", 1024*1024)
+	SmtpServerParams.MaxRecipients, _ = GetInt("mail.server.smtp.maxRecipients", 50)
+
+	ImapServerParams.Enable, _ = GetBool("mail.server.imap.enable", false)
+	ImapServerParams.Addr, _ = GetString("mail.server.imap.addr", ":1025")
+	ImapServerParams.Domain, _ = GetString("mail.server.imap.domain", "localhost")
 }
