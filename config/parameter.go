@@ -526,6 +526,6 @@ func init() {
 	SmtpServerParams.MaxRecipients, _ = GetInt("mail.server.smtp.maxRecipients", 50)
 
 	ImapServerParams.Enable, _ = GetBool("mail.server.imap.enable", false)
-	ImapServerParams.Addr, _ = GetString("mail.server.imap.addr", ":1025")
+	ImapServerParams.Addr, _ = GetString("mail.server.imap.addr", ":1143")
 	ImapServerParams.Domain, _ = GetString("mail.server.imap.domain", "localhost")
 }
