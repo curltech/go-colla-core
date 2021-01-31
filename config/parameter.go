@@ -19,6 +19,13 @@ type p2pParams struct {
 	ChainProtocolID string
 }
 
+type consensusParams struct {
+	PeerRange  uint
+	PeerNum    uint
+	MinPeerNum uint
+	Selector   string
+}
+
 type databaseParams struct {
 	Drivername      string
 	Host            string
@@ -252,6 +259,8 @@ var RqliteParams = rqliteParams{}
 
 var P2pParams = p2pParams{}
 
+var ConsensusParams = consensusParams{}
+
 var Libp2pParams = libp2pParams{}
 
 var ServerParams = serverParams{}
@@ -285,6 +294,12 @@ func init() {
 	AppParams.Template, _ = GetString("app.template", "html")
 
 	P2pParams.ChainProtocolID, _ = GetString("p2p.chainProtocolID", "/chain/1.0.0")
+
+	ConsensusParams.PeerRange, _ = GetUint("consensus.peerRange", 10)
+	ConsensusParams.PeerNum, _ = GetUint("consensus.peerNum", 4)
+	ConsensusParams.MinPeerNum, _ = GetUint("consensus.minPeerNum", 1)
+	ConsensusParams.Selector, _ = GetString("consensus.selector", "random")
+
 	Libp2pParams.Enable, _ = GetBool("libp2p.enable", false)
 	addrs, _ := GetString("libp2p.addrs", "")
 	if addrs != "" {
