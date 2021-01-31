@@ -20,9 +20,9 @@ type p2pParams struct {
 }
 
 type consensusParams struct {
-	PeerRange  uint
-	PeerNum    uint
-	MinPeerNum uint
+	PeerRange  int
+	PeerNum    int
+	MinPeerNum int
 	Selector   string
 }
 
@@ -295,9 +295,9 @@ func init() {
 
 	P2pParams.ChainProtocolID, _ = GetString("p2p.chainProtocolID", "/chain/1.0.0")
 
-	ConsensusParams.PeerRange, _ = GetUint("consensus.peerRange", 10)
-	ConsensusParams.PeerNum, _ = GetUint("consensus.peerNum", 4)
-	ConsensusParams.MinPeerNum, _ = GetUint("consensus.minPeerNum", 1)
+	ConsensusParams.PeerRange, _ = GetInt("consensus.peerRange", 10)
+	ConsensusParams.PeerNum, _ = GetInt("consensus.peerNum", 4)
+	ConsensusParams.MinPeerNum, _ = GetInt("consensus.minPeerNum", 1)
 	ConsensusParams.Selector, _ = GetString("consensus.selector", "random")
 
 	Libp2pParams.Enable, _ = GetBool("libp2p.enable", false)
