@@ -43,7 +43,7 @@ func (this *SmtpClient) Send(addr string, username string, password string, from
 	msg := strings.NewReader(message)
 	err := smtp.SendMail(addr, auth, from, to, msg)
 	if err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
@@ -57,26 +57,26 @@ func (this *SmtpClient) Dial(addr string, sender string, recipient string) error
 	this.addr = addr
 	this.Client, err = smtp.Dial(this.addr)
 	if err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
 
 	// Set the sender and recipient first
 	if err := this.Client.Mail(sender, nil); err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
 	if err := this.Client.Rcpt(recipient); err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
 
 	this.data, err = this.Client.Data()
 	if err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
@@ -88,7 +88,7 @@ func (this *SmtpClient) Print(format string, a ...interface{}) error {
 	var err error
 	_, err = fmt.Fprintf(this.data, format, a...)
 	if err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
@@ -100,7 +100,7 @@ func (this *SmtpClient) Quit() error {
 	var err error
 	err = this.data.Close()
 	if err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
@@ -108,7 +108,7 @@ func (this *SmtpClient) Quit() error {
 	// Send the QUIT command and close the connection.
 	err = this.Client.Quit()
 	if err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
@@ -127,7 +127,7 @@ func (this *SmtpClient) Sign(msg string, signer crypto.Signer) error {
 
 	var b bytes.Buffer
 	if err := dkim.Sign(&b, r, options); err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
@@ -140,16 +140,16 @@ func (this *SmtpClient) Verify(msg string) error {
 
 	verifications, err := dkim.Verify(r)
 	if err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
 
 	for _, v := range verifications {
 		if v.Err == nil {
-			logger.Infof("Valid signature for:", v.Domain)
+			logger.Sugar.Infof("Valid signature for:", v.Domain)
 		} else {
-			logger.Errorf(v.Err.Error())
+			logger.Sugar.Errorf(v.Err.Error())
 
 			return err
 		}

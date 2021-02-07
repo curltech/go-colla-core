@@ -81,7 +81,7 @@ func (f *StoreFSM) Apply(logEntry *raft.Log) interface{} {
 			break
 		}
 		// execute stmt or err.
-		logger.Infof("execute sql:%v", stmt)
+		logger.Sugar.Infof("execute sql:%v", stmt)
 	}
 
 	return nil
@@ -110,7 +110,7 @@ type StoreSnapshot struct {
 产生快照的时候调用，把当前所有的数据进行序列化备份
 */
 func (s *StoreSnapshot) Persist(sink raft.SnapshotSink) error {
-	logger.Infof("Snapshot Persist start!")
+	logger.Sugar.Infof("Snapshot Persist start!")
 
 	return nil
 }
@@ -119,7 +119,7 @@ func (s *StoreSnapshot) Persist(sink raft.SnapshotSink) error {
 Persist操作完成后调用
 */
 func (f *StoreSnapshot) Release() {
-	logger.Infof("Snapshot Release!")
+	logger.Sugar.Infof("Snapshot Release!")
 }
 
 /**
@@ -128,7 +128,7 @@ func (f *StoreSnapshot) Release() {
 func (node *Node) Execute(cmd []byte) {
 	applyFuture := node.Raft.Apply(cmd, 5*time.Second)
 	if err := applyFuture.Error(); err != nil {
-		logger.Infof("raft.Apply failed:%v", err.Error())
+		logger.Sugar.Infof("raft.Apply failed:%v", err.Error())
 		return
 	}
 }
@@ -167,7 +167,7 @@ func (node *Node) Join(address string) {
 		raft.ServerAddress(address),
 		0, 0)
 	if err := addPeerFuture.Error(); err != nil {
-		logger.Infof("Error joining peer to raft, address:%s, err:%v, code:%d", address, err, http.StatusInternalServerError)
+		logger.Sugar.Infof("Error joining peer to raft, address:%s, err:%v, code:%d", address, err, http.StatusInternalServerError)
 
 		return
 	}

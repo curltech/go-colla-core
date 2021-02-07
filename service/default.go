@@ -58,7 +58,7 @@ func GetSeq(name string, count int) []uint64 {
 	}
 	idCache, ok := idCaches[name]
 	if !ok {
-		logger.Errorf("seqname:%v no regist", name)
+		logger.Sugar.Errorf("seqname:%v no regist", name)
 		panic("SeqNotRegist")
 	}
 	ids, c := enough(name, count)
@@ -86,7 +86,7 @@ func GetSeq(name string, count int) []uint64 {
 							ids[c] = (j + base)
 							c++
 						} else {
-							logger.Warnf("")
+							logger.Sugar.Warnf("")
 						}
 					} else {
 						idCache.queue.Push(j + base)

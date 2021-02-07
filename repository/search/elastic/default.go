@@ -29,7 +29,7 @@ func (this *defaultSearchSession) Start() {
 	errorlog := log.New(os.Stdout, "APP", log.LstdFlags)
 	es, err := elastic.NewClient(elastic.SetErrorLog(errorlog), elastic.SetURL(config.SearchParams.Address...))
 	if err != nil {
-		logger.Errorf("Error new elastic client: %s", err)
+		logger.Sugar.Errorf("Error new elastic client: %s", err)
 	}
 	DefaultSearchSession.es = es
 }
@@ -37,15 +37,15 @@ func (this *defaultSearchSession) Start() {
 func (this *defaultSearchSession) Info() {
 	info, code, err := this.es.Ping(config.SearchParams.Address[0]).Do(context.Background())
 	if err != nil {
-		logger.Errorf("Error ping: %s", err)
+		logger.Sugar.Errorf("Error ping: %s", err)
 	}
-	logger.Infof("Elasticsearch returned with code %d and version %s\n", code, info.Version.Number)
+	logger.Sugar.Infof("Elasticsearch returned with code %d and version %s\n", code, info.Version.Number)
 
 	esversion, err := this.es.ElasticsearchVersion(config.SearchParams.Address[0])
 	if err != nil {
-		logger.Errorf("Error version info: %s", err)
+		logger.Sugar.Errorf("Error version info: %s", err)
 	}
-	logger.Infof("Elasticsearch version %s\n", esversion)
+	logger.Sugar.Infof("Elasticsearch version %s\n", esversion)
 }
 
 func (this *defaultSearchSession) Index(indexName string, mds ...interface{}) error {
@@ -66,10 +66,10 @@ func (this *defaultSearchSession) Index(indexName string, mds ...interface{}) er
 				BodyJson(md).
 				Do(context.Background())
 			if err != nil {
-				logger.Errorf("%v", err)
+				logger.Sugar.Errorf("%v", err)
 				return
 			}
-			logger.Infof("Indexed tweet %s to index s%s, type %s\n", put1.Id, put1.Index, put1.Type)
+			logger.Sugar.Infof("Indexed tweet %s to index s%s, type %s\n", put1.Id, put1.Index, put1.Type)
 		}(md)
 	}
 	wg.Wait()
@@ -92,11 +92,11 @@ func (this *defaultSearchSession) Delete(indexName string, ids ...string) error 
 				Id(id).
 				Do(context.Background())
 			if err != nil {
-				logger.Errorf("%v", err)
+				logger.Sugar.Errorf("%v", err)
 
 				return
 			}
-			logger.Infof("delete result %s\n", res.Result)
+			logger.Sugar.Infof("delete result %s\n", res.Result)
 		}(id)
 	}
 	wg.Wait()
@@ -123,10 +123,10 @@ func (this *defaultSearchSession) Update(indexName string, mds ...interface{}) e
 				Doc(md).
 				Do(context.Background())
 			if err != nil {
-				logger.Errorf("%v", err)
+				logger.Sugar.Errorf("%v", err)
 				return
 			}
-			logger.Infof("update age %s\n", res.Result)
+			logger.Sugar.Infof("update age %s\n", res.Result)
 		}(md)
 	}
 	wg.Wait()
@@ -142,7 +142,7 @@ func (this *defaultSearchSession) Get(indexName string, id string) (map[string]i
 		return nil, err
 	}
 	if result.Found {
-		logger.Infof("Got document %s in version %d from index %s, type %s\n", result.Id, result.Version, result.Index, result.Type)
+		logger.Sugar.Infof("Got document %s in version %d from index %s, type %s\n", result.Id, result.Version, result.Index, result.Type)
 	}
 
 	return collection.StructToMap(result, nil), nil
@@ -159,7 +159,7 @@ func (this *defaultSearchSession) Query(indexName string, query string, from int
 	q := elastic.NewRawStringQuery(query)
 	res, err = this.es.Search(indexName).Size(limit).From(from).Query(q).Do(context.Background())
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 
 	return this.response(res)
@@ -172,7 +172,7 @@ func (this *defaultSearchSession) StringQuery(indexName string, query string, fr
 	var err error
 	res, err = this.es.Search(indexName).Size(limit).From(from).Query(q).Do(context.Background())
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 
 	return this.response(res)
@@ -188,7 +188,7 @@ func (this *defaultSearchSession) MatchQuery(indexName string, query map[string]
 	//q.Filter(elastic.NewRangeQuery("age").Gt(30))
 	res, err = this.es.Search(indexName).Size(limit).From(from).Query(q).Do(context.Background())
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 	return this.response(res)
 }
@@ -203,7 +203,7 @@ func (this *defaultSearchSession) MatchPhraseQuery(indexName string, query map[s
 	var err error
 	res, err = this.es.Search(indexName).Size(limit).From(from).Query(q).Do(context.Background())
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 	return this.response(res)
 }
@@ -218,7 +218,7 @@ func (this *defaultSearchSession) FuzzyQuery(indexName string, query map[string]
 	var err error
 	res, err = this.es.Search(indexName).Size(limit).From(from).Query(q).Do(context.Background())
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 	return this.response(res)
 }
@@ -233,7 +233,7 @@ func (this *defaultSearchSession) TermQuery(indexName string, query map[string]i
 	var err error
 	res, err = this.es.Search(indexName).Size(limit).From(from).Query(q).Do(context.Background())
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 	return this.response(res)
 }
@@ -248,7 +248,7 @@ func (this *defaultSearchSession) WildcardQuery(indexName string, query map[stri
 	var err error
 	res, err = this.es.Search(indexName).Size(limit).From(from).Query(q).Do(context.Background())
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 	return this.response(res)
 }
@@ -263,7 +263,7 @@ func (this *defaultSearchSession) PrefixQuery(indexName string, query map[string
 	var err error
 	res, err = this.es.Search(indexName).Size(limit).From(from).Query(q).Do(context.Background())
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 	return this.response(res)
 }
@@ -286,7 +286,7 @@ func (this *defaultSearchSession) RangeQuery(indexName string, query map[string]
 	var err error
 	res, err = this.es.Search(indexName).Size(limit).From(from).Query(q).Do(context.Background())
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 	return this.response(res)
 }
@@ -298,7 +298,7 @@ func (this *defaultSearchSession) TermsAggregation(indexName string, field strin
 	var err error
 	res, err = this.es.Search(indexName).Size(limit).From(from).Aggregation(value, aggs).Do(context.Background())
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 	return this.response(res)
 }
@@ -309,19 +309,19 @@ func (this *defaultSearchSession) response(res *elastic.SearchResult) (map[strin
 	//	result = item.(map[string]interface{})
 	//}
 	if res.Hits.TotalHits.Value > 0 {
-		logger.Infof("Found a total of %d \n", res.Hits.TotalHits)
+		logger.Sugar.Infof("Found a total of %d \n", res.Hits.TotalHits)
 		for _, hit := range res.Hits.Hits {
 			buf, err := hit.Source.MarshalJSON()
 			if err != nil {
-				logger.Infof("Deserialization failed")
+				logger.Sugar.Infof("Deserialization failed")
 			}
 			err = json.Unmarshal(buf, &result) //另外一种取数据的方法
 			if err != nil {
-				logger.Infof("Deserialization failed")
+				logger.Sugar.Infof("Deserialization failed")
 			}
 		}
 	} else {
-		logger.Infof("Found no result \n")
+		logger.Sugar.Infof("Found no result \n")
 	}
 
 	return result, nil

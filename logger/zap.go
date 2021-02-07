@@ -8,32 +8,8 @@ import (
 	"os"
 )
 
-var logger *zap.Logger
-var sugarLogger *zap.SugaredLogger
-
-func Infof(template string, args ...interface{}) {
-	sugarLogger.Infof(template, args...)
-}
-
-func Debugf(template string, args ...interface{}) {
-	sugarLogger.Debugf(template, args...)
-}
-
-func Errorf(template string, args ...interface{}) {
-	sugarLogger.Errorf(template, args...)
-}
-
-func Fatalf(template string, args ...interface{}) {
-	sugarLogger.Fatalf(template, args...)
-}
-
-func Panicf(template string, args ...interface{}) {
-	sugarLogger.Panicf(template, args...)
-}
-
-func Warnf(template string, args ...interface{}) {
-	sugarLogger.Warnf(template, args...)
-}
+var Logger *zap.Logger
+var Sugar *zap.SugaredLogger
 
 func init() {
 	hook := lumberjack.Logger{
@@ -91,6 +67,6 @@ func init() {
 	}
 	fields := zap.Fields(fs...)
 	// 构造日志
-	logger = zap.New(core, caller, development, fields)
-	sugarLogger = logger.Sugar()
+	Logger = zap.New(core, caller, development, fields)
+	Sugar = Logger.Sugar()
 }

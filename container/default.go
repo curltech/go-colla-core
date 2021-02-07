@@ -23,9 +23,9 @@ func Regist(typ string, name string, beanPtr interface{}) {
 	_, ok := c[name]
 	if !ok {
 		c[name] = beanPtr
-		logger.Infof("bean:%v registed", name)
+		logger.Sugar.Infof("bean:%v registed", name)
 	} else {
-		logger.Warnf("bean:%v exist", name)
+		logger.Sugar.Warnf("bean:%v exist", name)
 	}
 }
 

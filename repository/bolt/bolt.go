@@ -25,7 +25,7 @@ func init() {
 	var err error
 	boltdb, err = bolt.Open("mydb.db", 0600, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
-		logger.Errorf("open bolt db:%v", err)
+		logger.Sugar.Errorf("open bolt db:%v", err)
 	}
 }
 
@@ -225,11 +225,11 @@ func (this *BoltSession) Transaction(fc func(s repository.DbSession) error) {
 	}
 	defer func() {
 		if p := recover(); p != nil {
-			logger.Errorf("recover rollback:%s\r\n", p)
+			logger.Sugar.Errorf("recover rollback:%s\r\n", p)
 			tx.Rollback()
 			panic(p) // re-throw panic after Rollback
 		} else if err != nil {
-			logger.Errorf("error rollback:%s\r\n", err)
+			logger.Sugar.Errorf("error rollback:%s\r\n", err)
 			tx.Rollback() // err is non-nil; don't change it
 		} else {
 			err = tx.Commit() // err is nil; if Commit returns error update err

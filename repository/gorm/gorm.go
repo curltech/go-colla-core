@@ -43,7 +43,7 @@ func init() {
 	dsn := fmt.Sprintf("host=%v port=%v dbname=%v user=%v password=%v sslmode=%v", host, port, dbname, user, password, sslmode)
 	var err error
 	engine, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: gormlogger.Default.LogMode(gormlogger.Info),
+		Logger: gormlogger.Sugar.Default.LogMode(gormlogger.Sugar.Info),
 	})
 	if err != nil {
 		panic("failed to connect database")
@@ -67,7 +67,7 @@ func NewGormSession() repository.DbSession {
 func (this *GormSession) Sync(bean ...interface{}) {
 	err := engine.AutoMigrate(bean...)
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 }
 
@@ -260,11 +260,11 @@ func (this *GormSession) Transaction(fc func(s repository.DbSession) error) {
 	}
 	defer func() {
 		if p := recover(); p != nil {
-			logger.Errorf("recover rollback:%s\r\n", p)
+			logger.Sugar.Errorf("recover rollback:%s\r\n", p)
 			session.Rollback()
 			panic(p) // re-throw panic after Rollback
 		} else if session.Error != nil {
-			logger.Errorf("error rollback:%s\r\n", session.Error)
+			logger.Sugar.Errorf("error rollback:%s\r\n", session.Error)
 			session.Rollback() // err is non-nil; don't change it
 		} else {
 			session = session.Commit() // err is nil; if Commit returns error update err

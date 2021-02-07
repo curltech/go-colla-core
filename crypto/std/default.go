@@ -310,7 +310,7 @@ func Encrypt(publicKey interface{}, plaintext []byte) []byte {
 	}
 	pub_, ok := publicKey.(*ed25519.PublicKey)
 	if ok {
-		logger.Errorf("NotSupport:%v", pub_)
+		logger.Sugar.Errorf("NotSupport:%v", pub_)
 	}
 
 	return nil
@@ -336,7 +336,7 @@ func Decrypt(privateKey interface{}, ciphertext []byte) []byte {
 	}
 	priv_, ok := privateKey.(*ed25519.PrivateKey)
 	if ok {
-		logger.Errorf("NotSupport:%v", priv_)
+		logger.Sugar.Errorf("NotSupport:%v", priv_)
 	}
 
 	return nil

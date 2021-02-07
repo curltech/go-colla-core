@@ -107,7 +107,7 @@ func (this *bleveSession) Get(indexName string, id string) (map[string]interface
 		for _, field := range doc.Fields {
 			result[field.Name()] = (string)(field.Value())
 		}
-		logger.Infof("%v", result)
+		logger.Sugar.Infof("%v", result)
 
 		return result, nil
 	}
@@ -140,7 +140,7 @@ func (this *bleveSession) query(indexName string, q blevequery.Query, from int, 
 	if err != nil {
 		return nil, err
 	}
-	logger.Infof("%v", searchResults)
+	logger.Sugar.Infof("%v", searchResults)
 	result := this.response(searchResults)
 
 	return result, nil
@@ -158,7 +158,7 @@ func (this *bleveSession) Index(indexName string, mds ...interface{}) error {
 		id := fmt.Sprintf("%v", v)
 		err := batch.Index(fmt.Sprintf("%v", id), md)
 		if err != nil {
-			logger.Errorf("%v", err)
+			logger.Sugar.Errorf("%v", err)
 		}
 	}
 	err = this.indexes[indexName].Batch(batch)

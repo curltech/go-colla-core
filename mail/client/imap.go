@@ -24,7 +24,7 @@ func GetImapClient() *ImapClient {
 }
 
 func (this *ImapClient) Login(addr string, username string, password string) error {
-	logger.Infof("Connecting to server...")
+	logger.Sugar.Infof("Connecting to server...")
 	this.addr = addr
 	this.username = username
 	this.password = password
@@ -32,19 +32,19 @@ func (this *ImapClient) Login(addr string, username string, password string) err
 	var err error
 	this.Client, err = client.DialTLS(this.addr, nil)
 	if err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
-	logger.Infof("Connected")
+	logger.Sugar.Infof("Connected")
 
 	// Login
 	if err = this.Client.Login(username, password); err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return err
 	}
-	logger.Infof("Logged in")
+	logger.Sugar.Infof("Logged in")
 
 	return nil
 }
@@ -57,13 +57,13 @@ func (this *ImapClient) receive() {
 		done <- this.Client.List("", "*", mailboxes)
 	}()
 
-	logger.Infof("Mailboxes:")
+	logger.Sugar.Infof("Mailboxes:")
 	for m := range mailboxes {
-		logger.Infof("* " + m.Name)
+		logger.Sugar.Infof("* " + m.Name)
 	}
 
 	if err := <-done; err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return
 	}
@@ -71,11 +71,11 @@ func (this *ImapClient) receive() {
 	// Select INBOX
 	mbox, err := this.Client.Select("INBOX", false)
 	if err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return
 	}
-	logger.Infof("Flags for INBOX:", mbox.Flags)
+	logger.Sugar.Infof("Flags for INBOX:", mbox.Flags)
 
 	// Get the last 4 messages
 	from := uint32(1)
@@ -93,18 +93,18 @@ func (this *ImapClient) receive() {
 		done <- this.Client.Fetch(seqset, []imap.FetchItem{imap.FetchEnvelope}, messages)
 	}()
 
-	logger.Infof("Last 4 messages:")
+	logger.Sugar.Infof("Last 4 messages:")
 	for msg := range messages {
-		logger.Infof("* " + msg.Envelope.Subject)
+		logger.Sugar.Infof("* " + msg.Envelope.Subject)
 	}
 
 	if err := <-done; err != nil {
-		logger.Errorf(err.Error())
+		logger.Sugar.Errorf(err.Error())
 
 		return
 	}
 
-	logger.Infof("Done!")
+	logger.Sugar.Infof("Done!")
 }
 
 func (this *ImapClient) Logout() {

@@ -80,7 +80,7 @@ func SetValue(obj interface{}, name string, val interface{}) error {
 		if field.CanSet() {
 			field.Set(reflect.ValueOf(val))
 		} else {
-			logger.Errorf("name:%v canot set", name)
+			logger.Sugar.Errorf("name:%v canot set", name)
 			return errors.New("canot set")
 		}
 	} else if reflect.Map == typ {
@@ -110,7 +110,7 @@ func Set(obj interface{}, name string, val string) error {
 	if field.CanSet() {
 		field.Set(reflect.ValueOf(o))
 	} else {
-		logger.Errorf("name:%v canot set", name)
+		logger.Sugar.Errorf("name:%v canot set", name)
 		return errors.New("canot set")
 	}
 
@@ -182,12 +182,12 @@ func Call(service interface{}, methodName string, args []interface{}) ([]interfa
 
 			return results, nil
 		} else {
-			logger.Errorf("InvalidMethod:%v", methodName)
+			logger.Sugar.Errorf("InvalidMethod:%v", methodName)
 
 			return nil, errors.New("InvalidMethod")
 		}
 	} else {
-		logger.Errorf("InvalidService")
+		logger.Sugar.Errorf("InvalidService")
 
 		return nil, errors.New("InvalidService")
 	}
@@ -228,7 +228,7 @@ func Append(rowsSlicePtr interface{}) interface{} {
 	sliceValue := reflect.Indirect(reflect.ValueOf(rowsSlicePtr))
 	var isSlice = sliceValue.Kind() == reflect.Slice
 	if !isSlice {
-		logger.Errorf("needs a pointer to a slice")
+		logger.Sugar.Errorf("needs a pointer to a slice")
 		return nil
 	}
 	sliceElementType := sliceValue.Type().Elem()
@@ -250,7 +250,7 @@ func Append(rowsSlicePtr interface{}) interface{} {
 
 	value := pv.Elem()
 	val := value.Interface()
-	logger.Infof("%v", val)
+	logger.Sugar.Infof("%v", val)
 
 	return &val
 }

@@ -12,7 +12,7 @@ import (
 func Read(filename string, rowsSlicePtrs ...interface{}) error {
 	xlsx, err := excelize.OpenFile(filename)
 	if err != nil {
-		logger.Errorf("filename:%v can't open", filename)
+		logger.Sugar.Errorf("filename:%v can't open", filename)
 		return err
 	}
 	count := xlsx.SheetCount
@@ -56,7 +56,7 @@ func Read(filename string, rowsSlicePtrs ...interface{}) error {
 				fieldname := head[j]
 				err := utilreflect.Set(value, fieldname, row[j])
 				if err != nil {
-					logger.Errorf("sheetname:%v,row:%v,col:%v,fieldname:%v can't set value:%v", sheetname, i, j, fieldname, value)
+					logger.Sugar.Errorf("sheetname:%v,row:%v,col:%v,fieldname:%v can't set value:%v", sheetname, i, j, fieldname, value)
 					continue
 				}
 			}

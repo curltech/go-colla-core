@@ -29,7 +29,7 @@ func (this *fileContent) Read(contentId string) ([]byte, error) {
 	if existed {
 		return ioutil.ReadFile(name)
 	} else {
-		logger.Errorf("filename:%v is exist", name)
+		logger.Sugar.Errorf("filename:%v is exist", name)
 		return nil, errors.New("FileNotExist")
 	}
 }
@@ -48,7 +48,7 @@ func (this *fileContent) Write(contentId string, data []byte) error {
 	name := pathname + "/" + filename
 	existed = exist(name)
 	if existed {
-		logger.Warnf("filename:%v is exist, will be overrided", name)
+		logger.Sugar.Warnf("filename:%v is exist, will be overrided", name)
 	}
 
 	return ioutil.WriteFile(name, data, this.filePerm)
@@ -84,7 +84,7 @@ func init() {
 	}
 	path = strings.TrimSuffix(path, "/")
 	gap, _ := config.GetInt("content.gap", 4)
-	logger.Infof("content basepath:%v", path)
+	logger.Sugar.Infof("content basepath:%v", path)
 	perm, _ := config.GetUint32("content.perm", 0664)
 	filePerm := os.FileMode(perm)
 	FileContent = fileContent{path: path, gap: gap, filePerm: filePerm}

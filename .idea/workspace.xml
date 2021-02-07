@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cc1cf7e7-837a-4124-8d3a-5e500e0dd1a0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/mail/client/imap.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mail/client/smtp.go" afterDir="false" />
+    <list default="true" id="cc1cf7e7-837a-4124-8d3a-5e500e0dd1a0" name="Default Changelist" comment="mail">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/parameter.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/parameter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/consensus/raft/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/consensus/raft/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/container/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/container/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/content/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/content/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crypto/std/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/crypto/std/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/excel/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/excel/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logger/zap.go" beforeDir="false" afterPath="$PROJECT_DIR$/logger/zap.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mail/client/imap.go" beforeDir="false" afterPath="$PROJECT_DIR$/mail/client/imap.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mail/client/smtp.go" beforeDir="false" afterPath="$PROJECT_DIR$/mail/client/smtp.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/repository/bolt/bolt.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/bolt/bolt.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/repository/gorm/gorm.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/gorm/gorm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/repository/search/bleve/bleve.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/search/bleve/bleve.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/repository/search/elastic/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/search/elastic/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/repository/search/elastic/elastic.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/search/elastic/elastic.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/repository/xorm/xorm.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/xorm/xorm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service/orm.go" beforeDir="false" afterPath="$PROJECT_DIR$/service/orm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/session/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/session/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/compress/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/compress/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/debug/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/debug/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/reflect/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/reflect/default.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/scheduler/default.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/scheduler/default.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +71,10 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="init" />
     <MESSAGE value="raft" />
-    <option name="LAST_COMMIT_MESSAGE" value="raft" />
+    <MESSAGE value="p2p" />
+    <MESSAGE value="mail" />
+    <MESSAGE value="consensus" />
+    <option name="LAST_COMMIT_MESSAGE" value="consensus" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

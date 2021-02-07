@@ -55,11 +55,11 @@ func GetSeqValue(name string) uint64 {
 			if err != nil {
 				panic(err)
 			}
-			logger.Infof("from sequence %v get id %v", name, i64)
+			logger.Sugar.Infof("from sequence %v get id %v", name, i64)
 
 			return i64
 		} else {
-			logger.Errorf("no query result")
+			logger.Sugar.Errorf("no query result")
 		}
 	}
 	return 0
@@ -332,11 +332,11 @@ func (this *OrmBaseService) Transaction(fc func(s repository.DbSession) (interfa
 	var err error
 	defer func() {
 		if p := recover(); p != nil {
-			logger.Errorf("recover rollback:%s\r\n", p)
+			logger.Sugar.Errorf("recover rollback:%s\r\n", p)
 			session.Rollback()
 			//panic(p) // re-throw panic after Rollback
 		} else if err != nil {
-			logger.Errorf("error rollback:%s\r\n", err)
+			logger.Sugar.Errorf("error rollback:%s\r\n", err)
 			session.Rollback() // err is non-nil; don't change it
 		} else {
 			session.Commit() // err is nil; if Commit returns error update err
@@ -345,7 +345,7 @@ func (this *OrmBaseService) Transaction(fc func(s repository.DbSession) (interfa
 	// 执行在事务内的处理
 	result, err := fc(session)
 	if err != nil {
-		logger.Errorf("Exception:%v", err)
+		logger.Sugar.Errorf("Exception:%v", err)
 	}
 
 	return result, err

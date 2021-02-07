@@ -117,7 +117,7 @@ func NewXormSession() repository.DbSession {
 func (this *XormSession) Sync(bean ...interface{}) {
 	err := engine.Sync2(bean...)
 	if err != nil {
-		logger.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err)
 	}
 }
 
@@ -329,11 +329,11 @@ func (this *XormSession) Transaction(fc func(s repository.DbSession) error) {
 	}
 	defer func() {
 		if p := recover(); p != nil {
-			logger.Errorf("recover rollback:%s\r\n", p)
+			logger.Sugar.Errorf("recover rollback:%s\r\n", p)
 			this.Session.Rollback()
 			panic(p) // re-throw panic after Rollback
 		} else if err != nil {
-			logger.Errorf("error rollback:%s\r\n", err)
+			logger.Sugar.Errorf("error rollback:%s\r\n", err)
 			this.Session.Rollback() // err is non-nil; don't change it
 		} else {
 			err = this.Session.Commit() // err is nil; if Commit returns error update err

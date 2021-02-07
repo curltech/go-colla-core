@@ -73,7 +73,7 @@ func (this *elasticSearchSession) Start() {
 	}
 	es, err := elastic.NewClient(cfg)
 	if err != nil {
-		logger.Errorf("Error new elastic client: %s", err)
+		logger.Sugar.Errorf("Error new elastic client: %s", err)
 	}
 	ElasticSearchSession.es = es
 }
@@ -84,21 +84,21 @@ func (this *elasticSearchSession) Start() {
 func (this *elasticSearchSession) Info() {
 	res, err := this.es.Info()
 	if err != nil {
-		logger.Errorf("Error getting response: %s", err)
+		logger.Sugar.Errorf("Error getting response: %s", err)
 	}
 	defer res.Body.Close()
 	// Check response status
 	if res.IsError() {
-		logger.Errorf("Error: %s", res.String())
+		logger.Sugar.Errorf("Error: %s", res.String())
 	}
 	// Deserialize the response into a map.
 	info := make(map[string]interface{})
 	if err := json.NewDecoder(res.Body).Decode(&info); err != nil {
-		logger.Errorf("Error parsing the response body: %s", err)
+		logger.Sugar.Errorf("Error parsing the response body: %s", err)
 	}
 	// Print client and server version numbers.
-	logger.Infof("Client: %s", elastic.Version)
-	logger.Infof("Server: %s", info["version"].(map[string]interface{})["number"])
+	logger.Sugar.Infof("Client: %s", elastic.Version)
+	logger.Sugar.Infof("Server: %s", info["version"].(map[string]interface{})["number"])
 }
 
 /**
@@ -113,7 +113,7 @@ func (this *elasticSearchSession) newBulkIndexer(indexName string) esutil.BulkIn
 		FlushInterval: time.Duration(config.SearchParams.FlushInterval) * time.Second, // The periodic flush interval
 	})
 	if err != nil {
-		logger.Errorf("Error creating the indexer: %s", err)
+		logger.Sugar.Errorf("Error creating the indexer: %s", err)
 	}
 
 	return bi
@@ -143,13 +143,13 @@ func (this *elasticSearchSession) Index(indexName string, mds ...interface{}) er
 			// Perform the request with the client.
 			res, err := req.Do(context.Background(), this.es)
 			if err != nil {
-				logger.Errorf("Error getting response: %s", err)
+				logger.Sugar.Errorf("Error getting response: %s", err)
 				return
 			}
 			defer res.Body.Close()
 
 			if res.IsError() {
-				logger.Errorf("[%s] Error indexing document ID=%d", res.Status(), id)
+				logger.Sugar.Errorf("[%s] Error indexing document ID=%d", res.Status(), id)
 				err = errors.New(fmt.Sprintf("StatusCode:%v", res.StatusCode))
 
 				return
@@ -158,10 +158,10 @@ func (this *elasticSearchSession) Index(indexName string, mds ...interface{}) er
 				// Deserialize the response into a map.
 				var r map[string]interface{}
 				if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
-					logger.Infof("Error parsing the response body: %s", err)
+					logger.Sugar.Infof("Error parsing the response body: %s", err)
 				} else {
 					// Print the response status and indexed document version.
-					logger.Infof("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
+					logger.Sugar.Infof("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
 				}
 			}
 		}(md)
@@ -185,7 +185,7 @@ func (this *elasticSearchSession) Query(indexName string, query string, from int
 	var buf bytes.Buffer
 	_, err := buf.WriteString(query)
 	if err != nil {
-		logger.Errorf("Error encoding query: %s", err)
+		logger.Sugar.Errorf("Error encoding query: %s", err)
 
 		return nil, err
 	}
@@ -201,7 +201,7 @@ func (this *elasticSearchSession) Query(indexName string, query string, from int
 		this.es.Search.WithSize(limit),
 	)
 	if err != nil {
-		logger.Errorf("Error getting response: %s", err)
+		logger.Sugar.Errorf("Error getting response: %s", err)
 
 		return nil, err
 	}
@@ -214,10 +214,10 @@ func (this *elasticSearchSession) response(res *esapi.Response, err error) (map[
 	if res.IsError() {
 		var e map[string]interface{}
 		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
-			logger.Errorf("Error parsing the response body: %s", err)
+			logger.Sugar.Errorf("Error parsing the response body: %s", err)
 		} else {
 			// Print the response status and error information.
-			logger.Errorf("[%s] %s: %s",
+			logger.Sugar.Errorf("[%s] %s: %s",
 				res.Status(),
 				e["error"].(map[string]interface{})["type"],
 				e["error"].(map[string]interface{})["reason"],
@@ -228,12 +228,12 @@ func (this *elasticSearchSession) response(res *esapi.Response, err error) (map[
 	}
 	var result map[string]interface{}
 	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
-		logger.Errorf("Error parsing the response body: %s", err)
+		logger.Sugar.Errorf("Error parsing the response body: %s", err)
 
 		return nil, err
 	}
 	// Print the response status, number of results, and request duration.
-	logger.Infof(
+	logger.Sugar.Infof(
 		"[%s] %d hits; took: %dms",
 		res.Status(),
 		int(result["hits"].(map[string]interface{})["total"].(map[string]interface{})["value"].(float64)),
@@ -241,7 +241,7 @@ func (this *elasticSearchSession) response(res *esapi.Response, err error) (map[
 	)
 	// Print the ID and document source for each hit.
 	for _, hit := range result["hits"].(map[string]interface{})["hits"].([]interface{}) {
-		logger.Infof(" * ID=%s, %s", hit.(map[string]interface{})["_id"], hit.(map[string]interface{})["_source"])
+		logger.Sugar.Infof(" * ID=%s, %s", hit.(map[string]interface{})["_id"], hit.(map[string]interface{})["_source"])
 	}
 
 	return result, nil
@@ -250,10 +250,10 @@ func (this *elasticSearchSession) response(res *esapi.Response, err error) (map[
 func (this *elasticSearchSession) CreateIndex(indexName string) {
 	res, err := this.es.Indices.Create(indexName)
 	if err != nil {
-		logger.Errorf("Cannot create index: %s", err)
+		logger.Sugar.Errorf("Cannot create index: %s", err)
 	}
 	if res.IsError() {
-		logger.Errorf("Cannot create index: %s", res)
+		logger.Sugar.Errorf("Cannot create index: %s", res)
 	}
 	res.Body.Close()
 }
@@ -261,7 +261,7 @@ func (this *elasticSearchSession) CreateIndex(indexName string) {
 func (this *elasticSearchSession) DeleteIndex(indexName string) {
 	res, err := this.es.Indices.Delete([]string{indexName}, this.es.Indices.Delete.WithIgnoreUnavailable(true))
 	if err != nil || res.IsError() {
-		logger.Errorf("Cannot delete index: %s", err)
+		logger.Sugar.Errorf("Cannot delete index: %s", err)
 	}
 	res.Body.Close()
 }
@@ -273,7 +273,7 @@ func (this *elasticSearchSession) BulkIndex(indexName string, mds ...interface{}
 		// Prepare the data payload: encode article to JSON
 		data, err := json.Marshal(md)
 		if err != nil {
-			logger.Errorf("Cannot encode article %d: %s", md, err)
+			logger.Sugar.Errorf("Cannot encode article %d: %s", md, err)
 		}
 		// Add an item to the BulkIndexer
 		id, _ := reflect.GetValue(md, baseentity.FieldName_Id)
@@ -305,24 +305,24 @@ func (this *elasticSearchSession) BulkIndex(indexName string, mds ...interface{}
 			},
 		)
 		if err != nil {
-			logger.Errorf("Unexpected error: %s", err)
+			logger.Sugar.Errorf("Unexpected error: %s", err)
 		}
 	}
 	// Close the indexer
 	if err := bi.Close(context.Background()); err != nil {
-		logger.Errorf("Unexpected error: %s", err)
+		logger.Sugar.Errorf("Unexpected error: %s", err)
 	}
 
 	biStats := bi.Stats()
 	// Report the results: number of indexed docs, number of errors, duration, indexing rate
 	if biStats.NumFailed > 0 {
-		logger.Errorf(
+		logger.Sugar.Errorf(
 			"Indexed [%s] documents with [%s] errors",
 			humanize.Comma(int64(biStats.NumFlushed)),
 			humanize.Comma(int64(biStats.NumFailed)),
 		)
 	} else {
-		logger.Infof(
+		logger.Sugar.Infof(
 			"Sucessfuly indexed [%s] documents",
 			humanize.Comma(int64(biStats.NumFlushed)))
 	}
@@ -348,13 +348,13 @@ func (this *elasticSearchSession) Delete(indexName string, ids ...string) error 
 			// Perform the request with the client.
 			res, err := req.Do(context.Background(), this.es)
 			if err != nil {
-				logger.Errorf("Error getting response: %s", err)
+				logger.Sugar.Errorf("Error getting response: %s", err)
 				return
 			}
 			defer res.Body.Close()
 
 			if res.IsError() {
-				logger.Errorf("[%s] Error indexing document ID=%d", res.Status(), id)
+				logger.Sugar.Errorf("[%s] Error indexing document ID=%d", res.Status(), id)
 				err = errors.New(fmt.Sprintf("StatusCode:%v", res.StatusCode))
 
 				return
@@ -375,12 +375,12 @@ func (this *elasticSearchSession) Get(indexName string, id string) (map[string]i
 	// Perform the request with the client.
 	res, err := req.Do(context.Background(), this.es)
 	if err != nil {
-		logger.Errorf("Error getting response: %s", err)
+		logger.Sugar.Errorf("Error getting response: %s", err)
 
 		return nil, err
 	}
 	if err != nil {
-		logger.Errorf("Error getting response: %s", err)
+		logger.Sugar.Errorf("Error getting response: %s", err)
 
 		return nil, err
 	}
