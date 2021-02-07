@@ -20,10 +20,11 @@ type p2pParams struct {
 }
 
 type consensusParams struct {
-	PeerRange  int
-	PeerNum    int
-	MinPeerNum int
-	Selector   string
+	PeerRange      int
+	PeerNum        int
+	StdMinPeerNum  int
+	RaftMinPeerNum int
+	Selector       string
 }
 
 type databaseParams struct {
@@ -297,7 +298,8 @@ func init() {
 
 	ConsensusParams.PeerRange, _ = GetInt("consensus.peerRange", 10)
 	ConsensusParams.PeerNum, _ = GetInt("consensus.peerNum", 4)
-	ConsensusParams.MinPeerNum, _ = GetInt("consensus.minPeerNum", 1)
+	ConsensusParams.StdMinPeerNum, _ = GetInt("consensus.stdMinPeerNum", 0)
+	ConsensusParams.RaftMinPeerNum, _ = GetInt("consensus.raftMinPeerNum", 1)
 	ConsensusParams.Selector, _ = GetString("consensus.selector", "random")
 
 	Libp2pParams.Enable, _ = GetBool("libp2p.enable", false)
