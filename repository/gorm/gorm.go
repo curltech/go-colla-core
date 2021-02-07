@@ -43,7 +43,7 @@ func init() {
 	dsn := fmt.Sprintf("host=%v port=%v dbname=%v user=%v password=%v sslmode=%v", host, port, dbname, user, password, sslmode)
 	var err error
 	engine, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: gormlogger.Sugar.Default.LogMode(gormlogger.Sugar.Info),
+		Logger: gormlogger.Default.LogMode(gormlogger.Info),
 	})
 	if err != nil {
 		panic("failed to connect database")
