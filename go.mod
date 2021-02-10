@@ -6,7 +6,7 @@ require (
 	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/ProtonMail/gopenpgp/v2 v2.0.1
 	github.com/allegro/bigcache v1.2.1
-	github.com/blevesearch/bleve v1.0.12
+	github.com/blevesearch/bleve/v2 v2.0.1
 	github.com/boltdb/bolt v1.3.1
 	github.com/cenkalti/backoff/v4 v4.0.2
 	github.com/dustin/go-humanize v1.0.0

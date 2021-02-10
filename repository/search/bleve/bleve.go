@@ -3,10 +3,11 @@ package bleve
 import (
 	"errors"
 	"fmt"
-	"github.com/blevesearch/bleve"
-	"github.com/blevesearch/bleve/index/scorch"
-	"github.com/blevesearch/bleve/mapping"
-	blevequery "github.com/blevesearch/bleve/search/query"
+	"github.com/blevesearch/bleve/v2"
+	"github.com/blevesearch/bleve/v2/index/scorch"
+	"github.com/blevesearch/bleve/v2/mapping"
+	blevequery "github.com/blevesearch/bleve/v2/search/query"
+	index "github.com/blevesearch/bleve_index_api"
 	"github.com/curltech/go-colla-core/config"
 	baseentity "github.com/curltech/go-colla-core/entity"
 	"github.com/curltech/go-colla-core/logger"
@@ -29,7 +30,7 @@ func (this *bleveSession) Start() {
 		this.indexes = make(map[string]bleve.Index)
 	}
 	indexMapping := bleve.NewIndexMapping()
-	this.zh(indexMapping)
+	this.zhGse(indexMapping)
 	this.indexMapping = indexMapping
 }
 
@@ -61,7 +62,7 @@ func (this *bleveSession) init(indexName string) error {
 	return nil
 }
 
-func (this *bleveSession) zh(indexMapping *mapping.IndexMappingImpl) error {
+func (this *bleveSession) zhJieba(indexMapping *mapping.IndexMappingImpl) error {
 	err := indexMapping.AddCustomTokenizer("gojieba",
 		map[string]interface{}{
 			"dictpath":     gojieba.DICT_PATH,
@@ -89,6 +90,26 @@ func (this *bleveSession) zh(indexMapping *mapping.IndexMappingImpl) error {
 	return nil
 }
 
+func (this *bleveSession) zhGse(indexMapping *mapping.IndexMappingImpl) error {
+	err := indexMapping.AddCustomTokenizer("gse", map[string]interface{}{
+		"type":       "gse",
+		"user_dicts": "./data/dict/zh/dict.txt", // <-- MUST specified
+	})
+	if err != nil {
+		return err
+	}
+	err = indexMapping.AddCustomAnalyzer("gse", map[string]interface{}{
+		"type":      "gse",
+		"tokenizer": "gse",
+	})
+	if err != nil {
+		return err
+	}
+	indexMapping.DefaultAnalyzer = "gse"
+
+	return nil
+}
+
 func (this *bleveSession) AddDocumentMapping(doctype string, dm *mapping.DocumentMapping) {
 	//blogMapping := bleve.NewDocumentMapping()
 	//this.engine.Mapping().AddDocumentMapping("blog", blogMapping)
@@ -104,9 +125,9 @@ func (this *bleveSession) Get(indexName string, id string) (map[string]interface
 	doc, err := this.indexes[indexName].Document(id)
 	if err == nil && doc != nil {
 		result := make(map[string]interface{})
-		for _, field := range doc.Fields {
+		doc.VisitFields(func(field index.Field) {
 			result[field.Name()] = (string)(field.Value())
-		}
+		})
 		logger.Sugar.Infof("%v", result)
 
 		return result, nil
