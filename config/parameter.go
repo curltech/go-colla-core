@@ -297,8 +297,8 @@ func init() {
 	P2pParams.ChainProtocolID, _ = GetString("p2p.chainProtocolID", "/chain/1.0.0")
 
 	ConsensusParams.PeerRange, _ = GetInt("consensus.peerRange", 10)
-	ConsensusParams.PeerNum, _ = GetInt("consensus.peerNum", 4)
-	ConsensusParams.StdMinPeerNum, _ = GetInt("consensus.stdMinPeerNum", 0)
+	ConsensusParams.PeerNum, _ = GetInt("consensus.peerNum", 3)
+	ConsensusParams.StdMinPeerNum, _ = GetInt("consensus.stdMinPeerNum", 1)
 	ConsensusParams.RaftMinPeerNum, _ = GetInt("consensus.raftMinPeerNum", 1)
 	ConsensusParams.Selector, _ = GetString("consensus.selector", "random")
 
