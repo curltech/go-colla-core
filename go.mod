@@ -7,6 +7,7 @@ require (
 	github.com/ProtonMail/gopenpgp/v2 v2.0.1
 	github.com/allegro/bigcache v1.2.1
 	github.com/blevesearch/bleve/v2 v2.0.1
+	github.com/blevesearch/bleve_index_api v1.0.0
 	github.com/boltdb/bolt v1.3.1
 	github.com/cenkalti/backoff/v4 v4.0.2
 	github.com/dustin/go-humanize v1.0.0
@@ -25,6 +26,7 @@ require (
 	github.com/hashicorp/raft-boltdb v0.0.0-20171010151810-6e5ba93211ea
 	github.com/json-iterator/go v1.1.10
 	github.com/lib/pq v1.8.0
+	github.com/libp2p/go-libp2p-core v0.8.5
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
@@ -37,6 +39,7 @@ require (
 	github.com/rqlite/rqlite v4.6.0+incompatible
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.6.0 // indirect
+	github.com/streadway/amqp v1.0.0
 	github.com/ttys3/gojieba-bleve v1.0.2
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.9
 	github.com/xwb1989/sqlparser v0.0.0-20180606152119-120387863bf2

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cc1cf7e7-837a-4124-8d3a-5e500e0dd1a0" name="Default Changelist" comment="logger.Sugar">
+    <list default="true" id="cc1cf7e7-837a-4124-8d3a-5e500e0dd1a0" name="Default Changelist" comment="update">
+      <change afterPath="$PROJECT_DIR$/repository/amqp/consumer.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/repository/amqp/default.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/repository/amqp/producer.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/repository/search/bleve/bleve.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/search/bleve/bleve.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +59,9 @@
     <MESSAGE value="mail" />
     <MESSAGE value="consensus" />
     <MESSAGE value="logger.Sugar" />
-    <option name="LAST_COMMIT_MESSAGE" value="logger.Sugar" />
+    <MESSAGE value="bleve2" />
+    <MESSAGE value="update" />
+    <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
