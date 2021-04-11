@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"gopkg.in/yaml.v3"
@@ -17,7 +16,6 @@ var confs map[string]map[string]interface{}
 
 const prefix string = "./conf/"
 const suffix string = ".yml"
-const defaultappname string = "app"
 
 func parseYAML(filename string) map[string]interface{} {
 	if confs == nil {
@@ -55,65 +53,36 @@ func parseYAML(filename string) map[string]interface{} {
 */
 var appName string
 
-func GetAppName() string {
-	if appName == "" {
-		appName = "app"
-		fmt.Errorf("No AppName, will be set:%v", appName)
-	} else {
-		fmt.Printf("AppName is:%v", appName)
-	}
-
-	return appName
-}
-
 func init() {
-	appname := flag.String("appname", "", "app name(default app)")
+	// 获取应用名称，默认为peer1
+	appname := flag.String("appname", "", "app name")
 	flag.Parse()
 	if len(*appname) == 0 {
-		fmt.Errorf("'appname' is required")
-		panic("'appname' is required")
+		appName = "peer1"
 	} else {
 		appName = *appname
 	}
 
-	//读取公共配置
-	parseYAML(prefix + defaultappname + suffix)
-	files, err := ioutil.ReadDir(prefix)
+	// 读取应用配置
+	filename := prefix + appName + suffix
+	_, err := ioutil.ReadFile(filename)
 	if err != nil {
-		fmt.Errorf("%v path is not exist:%v", prefix, err)
-	}
-	//读取各应用的单独配置
-	for _, file := range files {
-		filename := file.Name()
-		if filename != defaultappname+".yml" && filename != "iris.yml" {
-			if strings.HasSuffix(filename, suffix) {
-				parseYAML(prefix + filename)
-			}
-		}
+		fmt.Errorf("file does not exist: %v, %v", filename, err)
+		panic(fmt.Sprintf("file does not exist: %v, %v", filename, err))
+	} else {
+		parseYAML(filename)
 	}
 }
 
 func Get(name string) (interface{}, error) {
-	v, err := get(name, appName)
-	if err != nil {
-		if appName != defaultappname {
-			v, err = get(name, defaultappname)
-		}
-	}
-
-	return v, err
+	return get(name, appName)
 }
 
 func get(name string, appname string) (interface{}, error) {
 	data, ok := confs[appname]
 	if !ok {
-		fmt.Errorf("app conf is not exist:%v", appname)
-		if appname == defaultappname {
-			fmt.Errorf("default app conf is not exist:%v", defaultappname)
-			panic(defaultappname)
-		}
-
-		return nil, errors.New("NoAppName")
+		fmt.Errorf("app conf does not exist: %v", appname)
+		panic(fmt.Sprintf("app conf does not exist: %v", appname))
 	}
 	path := strings.Split(name, ".")
 	var v interface{}
