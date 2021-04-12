@@ -13,7 +13,7 @@ import (
 	"github.com/curltech/go-colla-core/logger"
 	"github.com/curltech/go-colla-core/util/collection"
 	"github.com/curltech/go-colla-core/util/reflect"
-	"github.com/ttys3/gojieba-bleve"
+	//"github.com/ttys3/gojieba-bleve"
 	"github.com/yanyiwu/gojieba"
 	"os"
 )
@@ -223,13 +223,13 @@ func (this *bleveSession) Close(indexName string) error {
 	if err != nil {
 		return err
 	}
-	analyzer := this.indexes[indexName].Mapping().AnalyzerNamed("gojieba")
+	/*analyzer := this.indexes[indexName].Mapping().AnalyzerNamed("gojieba")
 	tokenizer, ok := analyzer.Tokenizer.(*jbleve.JiebaTokenizer)
 	if !ok {
 		panic("jieba.Free() failed")
 	} else {
 		tokenizer.Free()
-	}
+	}*/
 	return this.indexes[indexName].Close()
 }
 
