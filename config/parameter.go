@@ -462,8 +462,8 @@ func init() {
 
 	TlsParams.Mode, _ = GetString("http.tls.mode", "none")
 	TlsParams.Port, _ = GetString("http.tls.port", "9090")
-	TlsParams.Cert, _ = GetString("http.tls.cert", "conf/camsi-server-ec.crt")
-	TlsParams.Key, _ = GetString("http.tls.key", "conf/camsi-server-ec.key")
+	TlsParams.Cert, _ = GetString("http.tls.cert", "")
+	TlsParams.Key, _ = GetString("http.tls.key", "")
 	TlsParams.Url, _ = GetString("http.tls.url")
 	TlsParams.Email, _ = GetString("http.tls.email")
 	TlsParams.Domain, _ = GetString("http.tls.domain")
