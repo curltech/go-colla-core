@@ -67,8 +67,14 @@ func init() {
 	filename := prefix + appName + suffix
 	_, err := ioutil.ReadFile(filename)
 	if err != nil {
-		fmt.Errorf("file does not exist: %v, %v", filename, err)
 		panic(fmt.Sprintf("file does not exist: %v, %v", filename, err))
+	} else {
+		parseYAML(filename)
+	}
+	filename = prefix + "iris" + suffix
+	_, err := ioutil.ReadFile(filename)
+	if err != nil {
+		fmt.Errorf("file does not exist: %v, %v", filename, err)
 	} else {
 		parseYAML(filename)
 	}
@@ -81,7 +87,6 @@ func Get(name string) (interface{}, error) {
 func get(name string, appname string) (interface{}, error) {
 	data, ok := confs[appname]
 	if !ok {
-		fmt.Errorf("app conf does not exist: %v", appname)
 		panic(fmt.Sprintf("app conf does not exist: %v", appname))
 	}
 	path := strings.Split(name, ".")
