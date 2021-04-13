@@ -519,10 +519,12 @@ func init() {
 	SfuParams.Usernames = make([]string, 0)
 	SfuParams.Credentials = make([]string, 0)
 	urls, _ := GetString("sfu.urls")
+	username, _ := GetString("sfu.username")
+	credential, _ := GetString("sfu.credential")
 	if urls != "" {
-		url := strings.Split(urls, ":")
-		usernames := strings.Split(urls, ":")
-		credentials := strings.Split(urls, ":")
+		url := strings.Split(urls, ";")
+		usernames := strings.Split(username, ";")
+		credentials := strings.Split(credential, ";")
 		for i, u := range url {
 			SfuParams.Urls = append(SfuParams.Urls, strings.Split(u, ","))
 			if i < len(usernames) {
