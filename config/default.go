@@ -72,7 +72,7 @@ func init() {
 		parseYAML(filename)
 	}
 	filename = prefix + "iris" + suffix
-	_, err := ioutil.ReadFile(filename)
+	_, err = ioutil.ReadFile(filename)
 	if err != nil {
 		fmt.Errorf("file does not exist: %v, %v", filename, err)
 	} else {
