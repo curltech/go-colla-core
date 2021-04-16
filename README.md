@@ -1,7 +1,7 @@
 # go-colla-core
 core
 
-image:: https://img.shields.io/badge/Maintained%3F-yes-green.svg
+https://img.shields.io/badge/Maintained%3F-yes-green.svg
 
 |Website curltech.io|
 .. |Website shields.io| image:: https://img.shields.io/website-up-down-green-red/http/shields.io.svg
