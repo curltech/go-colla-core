@@ -1,5 +1,4 @@
-# go-colla-core
-A Go library provides basic functions.
+### A Go library provides basic functions.
 
 # License
 Copyright 2020-2021 CURL TECH PTE. LTD.
