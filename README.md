@@ -1,8 +1,6 @@
 # go-colla-core
 A Go library provides basic functions.
 
-http://ForTheBadge.com/images/badges/uses-go-libp2p.svg
-
 # License
 Copyright 2020-2021 CURL TECH PTE. LTD.
 
