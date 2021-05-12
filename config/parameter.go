@@ -110,6 +110,7 @@ type libp2pParams struct {
 	Addr                     string
 	Port                     string
 	WsPort                   string
+	WssPort                  string
 	ReadTimeout              int
 	WriteTimeout             int
 	EnableTls                bool
@@ -124,6 +125,7 @@ type libp2pParams struct {
 	EnableRelay              bool
 	EnableAutoRelay          bool
 	EnableWebsocket          bool
+	EnableWss                bool
 	EnableWebrtc             bool
 	EnableAutoNat            bool
 	EnableNATService         bool
@@ -323,7 +325,9 @@ func init() {
 	Libp2pParams.EnableAutoRelay, _ = GetBool("libp2p.enableAutoRelay", false)
 	//这个参数表示只启动websocket，不启动Tcp，缺省Tcp，websocket是启动的
 	Libp2pParams.EnableWebsocket, _ = GetBool("libp2p.enableWebsocket", false)
+	Libp2pParams.EnableWss, _ = GetBool("libp2p.enableWss", false)
 	Libp2pParams.WsPort, _ = GetString("libp2p.wsPort", "4719")
+	Libp2pParams.WssPort, _ = GetString("libp2p.wssPort", "5719")
 	Libp2pParams.EnableWebrtc, _ = GetBool("libp2p.enableWebrtcStar", false)
 	Libp2pParams.EnableWebrtc, _ = GetBool("libp2p.enableWebrtc", false)
 	Libp2pParams.EnableAutoNat, _ = GetBool("libp2p.enableAutoNat", false)
