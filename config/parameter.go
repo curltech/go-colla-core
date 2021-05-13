@@ -182,10 +182,8 @@ type tlsParams struct {
 }
 
 type proxyParams struct {
-	Mode     string
-	Address  string
-	Target   string
-	Redirect bool
+	Mode    string
+	Mapping interface{}
 }
 
 type rbacParams struct {
@@ -473,9 +471,7 @@ func init() {
 	TlsParams.Domain, _ = GetString("http.tls.domain")
 
 	ProxyParams.Mode, _ = GetString("http.proxy.mode", "none")
-	ProxyParams.Address, _ = GetString("http.proxy.address", ":9090")
-	ProxyParams.Target, _ = GetString("http.proxy.target", "none")
-	ProxyParams.Redirect, _ = GetBool("http.proxy.redirect")
+	ProxyParams.Mapping, _ = Get("http.proxy.mapping")
 
 	nonePath, _ := GetString("rbac.nonePath", "/user/Login,/user/Logout")
 	if nonePath != "" {
