@@ -42,13 +42,17 @@ func exist(f string) bool {
 func (this *fileContent) Write(contentId string, data []byte) error {
 	pathname, filename := this.getFilename(contentId)
 	existed := exist(pathname)
-	if !existed {
+	if !existed && data != nil {
 		os.MkdirAll(pathname, this.filePerm)
 	}
 	name := pathname + "/" + filename
 	existed = exist(name)
 	if existed {
-		logger.Sugar.Warnf("filename:%v is exist, will be overrided", name)
+		if data == nil {
+			return os.Remove(name)
+		} else {
+			logger.Sugar.Warnf("filename:%v is exist, will be overrided", name)
+		}
 	}
 
 	return ioutil.WriteFile(name, data, this.filePerm)
