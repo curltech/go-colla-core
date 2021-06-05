@@ -2,11 +2,13 @@ package content
 
 import (
 	"errors"
+	"fmt"
 	"github.com/curltech/go-colla-core/config"
 	"github.com/curltech/go-colla-core/logger"
 	"io/ioutil"
 	"os"
 	"strings"
+	"syscall"
 )
 
 type ContentStream interface {
@@ -43,7 +45,13 @@ func (this *fileContent) Write(contentId string, data []byte) error {
 	pathname, filename := this.getFilename(contentId)
 	existed := exist(pathname)
 	if !existed && data != nil {
-		os.MkdirAll(pathname, this.filePerm)
+		mask := syscall.Umask(0) // comment this line for Windows platform
+		defer syscall.Umask(mask) // comment this line for Windows platform
+		err := os.MkdirAll(pathname, /*this.filePerm*/os.ModePerm)
+		if err != nil {
+			logger.Sugar.Errorf(fmt.Sprintf("failed to MkdirAll:%v", err))
+			return errors.New(fmt.Sprintf("failed to MkdirAll:%v", err))
+		}
 	}
 	name := pathname + "/" + filename
 	existed = exist(name)
