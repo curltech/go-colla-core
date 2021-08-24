@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
-	"syscall"
+	"syscall" // comment this line for Windows platform
 )
 
 type ContentStream interface {
