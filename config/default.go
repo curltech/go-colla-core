@@ -80,6 +80,10 @@ func init() {
 	}
 }
 
+func GetAppName() string {
+	return appName
+}
+
 func Get(name string) (interface{}, error) {
 	return get(name, appName)
 }
