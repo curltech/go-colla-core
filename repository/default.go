@@ -23,20 +23,20 @@ type QueryBuilder struct {
 }
 
 type DbSession interface {
-	Sync(bean ...interface{})
-	Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) bool
+	Sync(bean ...interface{}) error
+	Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) (bool,error)
 	Find(rowsSlicePtr interface{}, md interface{}, orderby string, from int, limit int, conds string, params ...interface{}) error
-	Insert(mds ...interface{}) int64
-	Update(md interface{}, columns []string, conds string, params ...interface{}) int64
-	Delete(md interface{}, conds string, params ...interface{}) int64
-	Exec(clause string, params ...interface{}) sql.Result
-	Query(clause string, params ...interface{}) []map[string][]byte
-	Count(bean interface{}, conds string, params ...interface{}) int64
-	Transaction(fc func(s DbSession) error)
-	Begin()
-	Rollback()
-	Commit()
-	Close()
+	Insert(mds ...interface{}) (int64,error)
+	Update(md interface{}, columns []string, conds string, params ...interface{}) (int64,error)
+	Delete(md interface{}, conds string, params ...interface{}) (int64,error)
+	Exec(clause string, params ...interface{}) (sql.Result,error)
+	Query(clause string, params ...interface{}) ([]map[string][]byte,error)
+	Count(bean interface{}, conds string, params ...interface{}) (int64,error)
+	Transaction(fc func(s DbSession) error) error
+	Begin() error
+	Rollback() error
+	Commit() error
+	Close() error
 }
 
 func GetId(md interface{}) (interface{}, bool) {

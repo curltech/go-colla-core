@@ -114,16 +114,18 @@ func NewXormSession() repository.DbSession {
 	return &XormSession{Session: s}
 }
 
-func (this *XormSession) Sync(bean ...interface{}) {
+func (this *XormSession) Sync(bean ...interface{}) error {
 	err := engine.Sync2(bean...)
 	if err != nil {
-		logger.Sugar.Errorf("%v", err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
+
+	return err
 }
 
 // Get retrieve one record from database, bean's non-empty fields
 // will be as conditions
-func (this *XormSession) Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) bool {
+func (this *XormSession) Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) (bool, error) {
 	var found bool
 	var err error
 	var session = this.Session
@@ -138,10 +140,10 @@ func (this *XormSession) Get(dest interface{}, locked bool, orderby string, cond
 	}
 	found, err = session.Get(dest)
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
 
-	return found
+	return found, err
 }
 
 // Find retrieve records from table, condiBeans's non-empty fields
@@ -165,25 +167,28 @@ func (this *XormSession) Find(rowsSlicePtr interface{}, md interface{}, orderby 
 	} else {
 		err = session.Find(rowsSlicePtr, md)
 	}
+	if err != nil {
+		logger.Sugar.Errorf("%v", err.Error())
+	}
 
 	return err
 }
 
 // insert model data to database
-func (this *XormSession) Insert(mds ...interface{}) int64 {
+func (this *XormSession) Insert(mds ...interface{}) (int64, error) {
 	affected, err := this.Session.Insert(mds...)
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
 
-	return affected
+	return affected, err
 }
 
 //第一个参数是更新的数据数组，当传入的为结构体指针时，只有非空和0的field才会被作为更新的字段
 //第二个参数指定要被更新的字段名称，即使非空和0的field也会被更新
 //不支持指定this.Session.Table(new(User))来指定表名，而是通过结构数组来指定，因此不支持map更新
 //在数据没有Id的时候，使用第三个参数条件bean作为条件
-func (this *XormSession) Update(md interface{}, columns []string, conds string, params ...interface{}) int64 {
+func (this *XormSession) Update(md interface{}, columns []string, conds string, params ...interface{}) (int64, error) {
 	var affected int64
 	var err error
 	var mds []interface{}
@@ -221,15 +226,15 @@ func (this *XormSession) Update(md interface{}, columns []string, conds string, 
 		}
 	}
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
-	return affected
+	return affected, err
 }
 
 //第一个参数是删除的数据数组，当传入的为结构体指针时，非空和0的field会被作为删除的条件
 //不支持指定this.Session.Table(new(User))来指定表名，而是通过结构数组来指定，因此不支持map删除
 //在数据没有Id的时候，使用第二个参数作为条件
-func (this *XormSession) Delete(md interface{}, conds string, params ...interface{}) int64 {
+func (this *XormSession) Delete(md interface{}, conds string, params ...interface{}) (int64, error) {
 	var affected int64 = 0
 	var err error
 	var mds []interface{}
@@ -260,13 +265,13 @@ func (this *XormSession) Delete(md interface{}, conds string, params ...interfac
 		}
 	}
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
-	return affected
+	return affected, err
 }
 
 //execute sql and get result
-func (this *XormSession) Exec(clause string, params ...interface{}) sql.Result {
+func (this *XormSession) Exec(clause string, params ...interface{}) (sql.Result, error) {
 	var sqlOrArgs = make([]interface{}, 0)
 	sqlOrArgs = append(sqlOrArgs, clause)
 	if params != nil && len(params) > 0 {
@@ -276,13 +281,13 @@ func (this *XormSession) Exec(clause string, params ...interface{}) sql.Result {
 	}
 	result, err := this.Session.Exec(sqlOrArgs...)
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
-	return result
+	return result, err
 }
 
 //execute sql and get result
-func (this *XormSession) Query(clause string, params ...interface{}) []map[string][]byte {
+func (this *XormSession) Query(clause string, params ...interface{}) ([]map[string][]byte, error) {
 	var sqlOrArgs = make([]interface{}, 0)
 	sqlOrArgs = append(sqlOrArgs, clause)
 	if params != nil && len(params) > 0 {
@@ -292,12 +297,12 @@ func (this *XormSession) Query(clause string, params ...interface{}) []map[strin
 	}
 	result, err := this.Session.Query(sqlOrArgs...)
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
-	return result
+	return result, err
 }
 
-func (this *XormSession) Count(bean interface{}, conds string, params ...interface{}) int64 {
+func (this *XormSession) Count(bean interface{}, conds string, params ...interface{}) (int64, error) {
 	var count int64
 	var err error
 	if conds != "" && len(conds) > 0 {
@@ -306,10 +311,10 @@ func (this *XormSession) Count(bean interface{}, conds string, params ...interfa
 		count, err = this.Session.Count(bean)
 	}
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
 
-	return count
+	return count, err
 }
 
 /**
@@ -321,11 +326,11 @@ func (this *XormSession) Count(bean interface{}, conds string, params ...interfa
         }
 	})
 */
-func (this *XormSession) Transaction(fc func(s repository.DbSession) error) {
+func (this *XormSession) Transaction(fc func(s repository.DbSession) error) error {
 	defer this.Close()
 	err := this.Session.Begin()
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
 	defer func() {
 		if p := recover(); p != nil {
@@ -342,57 +347,67 @@ func (this *XormSession) Transaction(fc func(s repository.DbSession) error) {
 	// 执行在事务内的处理
 	err = fc(this)
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
+
+	return err
 }
 
-func (this *XormSession) Begin() {
+func (this *XormSession) Begin() error {
 	err := this.Session.Begin()
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
+
+	return err
 }
 
-func (this *XormSession) Rollback() {
+func (this *XormSession) Rollback() error {
 	err := this.Session.Rollback()
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
+
+	return err
 }
 
-func (this *XormSession) Commit() {
+func (this *XormSession) Commit() error {
 	err := this.Session.Commit()
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
+
+	return err
 }
 
-func (this *XormSession) Close() {
+func (this *XormSession) Close() error {
 	err := this.Session.Close()
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
+
+	return err
 }
 
 //scan result
-func (this *XormSession) Scan(dest interface{}) *XormSession {
+func (this *XormSession) Scan(dest interface{}) (*XormSession, error) {
 	rows, err := this.Session.Rows(dest)
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	} else {
 		defer rows.Close()
 		if rows.Next() {
 			err = rows.Scan(dest)
 			if err != nil {
-				panic(err)
+				logger.Sugar.Errorf("%v", err.Error())
 			}
 		}
 	}
 
-	return this
+	return this, err
 }
 
-func (this *XormSession) Complex(qb *repository.QueryBuilder, dest []interface{}) {
+func (this *XormSession) Complex(qb *repository.QueryBuilder, dest []interface{}) error {
 	// 构建查询对象
 	rows, err := this.Session.Select(qb.Select).
 		Distinct(qb.Distinct...).
@@ -403,13 +418,15 @@ func (this *XormSession) Complex(qb *repository.QueryBuilder, dest []interface{}
 		GroupBy(qb.GroupBy).
 		Limit(qb.Limit, qb.Offset).Rows(nil)
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
 	defer rows.Close()
 	for rows.Next() {
 		err = rows.Scan(dest)
 		if err != nil {
-			panic(err)
+			logger.Sugar.Errorf("%v", err.Error())
 		}
 	}
+
+	return err
 }

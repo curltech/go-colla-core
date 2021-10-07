@@ -46,7 +46,7 @@ func GetSeqValue(name string) uint64 {
 		return GetSequenceService().GetSeqValue(name)
 	} else if config.DatabaseParams.Sequence == "seq" {
 		sql := fmt.Sprintf("select nextval('%v')", name)
-		result := ormBaseService.Query(sql)
+		result, _ := ormBaseService.Query(sql)
 
 		if len(result) > 0 {
 			r := result[0]
@@ -108,19 +108,19 @@ func (this *OrmBaseService) GetSeqs(count int) []uint64 {
 
 // Get retrieve one record from database, bean's non-empty fields
 // will be as conditions
-func (this *OrmBaseService) Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) bool {
+func (this *OrmBaseService) Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) (bool, error) {
 	if !reflect.IsPtr(dest) {
-		panic(errors.New("DestinationNeedPtr"))
+		return false, errors.New("DestinationNeedPtr")
 	}
-	result, _ := this.Transaction(func(session repository.DbSession) (interface{}, error) {
-		result := session.Get(dest, locked, orderby, conds, params...)
+	result, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
+		result, err := session.Get(dest, locked, orderby, conds, params...)
 		// return nil will commit the whole transaction
-		return result, nil
+		return result, err
 	})
 	if result == nil {
-		return false
+		return false, err
 	}
-	return result.(bool)
+	return result.(bool), err
 }
 
 // Find retrieve records from table, condiBeans's non-empty fields
@@ -166,90 +166,101 @@ func (this *OrmBaseService) setId(rowPtr interface{}) bool {
 }
 
 // insert model data to database
-func (this *OrmBaseService) Insert(mds ...interface{}) int64 {
-	affected, _ := this.Transaction(func(session repository.DbSession) (interface{}, error) {
+func (this *OrmBaseService) Insert(mds ...interface{}) (int64, error) {
+	affected, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
 		var affected int64
+		var err error
 		for _, rowPtr := range mds {
 			if !reflect.IsPtr(rowPtr) {
 				panic(errors.New("DestinationNeedPtr"))
 			}
 			this.setId(rowPtr)
 
-			session.Insert(rowPtr)
-			affected++
+			_, err = session.Insert(rowPtr)
+			if err == nil {
+				affected++
+			} else {
+				return 0, err
+			}
 		}
 
 		// return nil will commit the whole transaction
-		return affected, nil
+		return affected, err
 	})
 	if affected == nil || affected == 0 {
-		return 0
+		return 0, err
 	}
 
-	return affected.(int64)
+	return affected.(int64), err
 }
 
 // update model to database.
 // cols set the columns those want to update.
-func (this *OrmBaseService) Update(md interface{}, columns []string, conds string, params ...interface{}) int64 {
-	affected, _ := this.Transaction(func(session repository.DbSession) (interface{}, error) {
+func (this *OrmBaseService) Update(md interface{}, columns []string, conds string, params ...interface{}) (int64, error) {
+	affected, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
 		var affected int64
-		affected = session.Update(md, columns, conds, params...)
+		affected, err := session.Update(md, columns, conds, params...)
 
-		return affected, nil
+		return affected, err
 	})
 	if affected == nil || affected == 0 {
-		return 0
+		return 0, err
 	}
 
-	return affected.(int64)
+	return affected.(int64), err
 }
 
 // Upsert model data to database by id field
-func (this *OrmBaseService) Upsert(mds ...interface{}) int64 {
-	affected, _ := this.Transaction(func(session repository.DbSession) (interface{}, error) {
+func (this *OrmBaseService) Upsert(mds ...interface{}) (int64, error) {
+	affected, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
 		var affected int64
+		var err error
 		for _, md := range mds {
 			if !reflect.IsPtr(md) && !reflect.IsSlice(md) {
 				panic(errors.New("DestinationNeedPtr"))
 			}
 			ok := this.setId(md)
 			if ok {
-				affected = session.Insert(md)
+				affected, err = session.Insert(md)
 			} else {
-				affected = session.Update(md, nil, "")
+				affected, err = session.Update(md, nil, "")
+			}
+			if err != nil {
+				return 0, err
 			}
 		}
 		// return nil will commit the whole transaction
-		return affected, nil
+		return affected, err
 	})
 	if affected == nil || affected == 0 {
-		return 0
+		return 0, err
 	}
 
-	return affected.(int64)
+	return affected.(int64), err
 }
 
 // delete model in database
 // Delete records, bean's non-empty fields are conditions
-func (this *OrmBaseService) Delete(md interface{}, conds string, params ...interface{}) int64 {
-	affected, nil := this.Transaction(func(session repository.DbSession) (interface{}, error) {
+func (this *OrmBaseService) Delete(md interface{}, conds string, params ...interface{}) (int64, error) {
+	affected, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
 		var affected int64
-		affected = session.Delete(md, conds, params...)
+		var err error
+		affected, err = session.Delete(md, conds, params...)
 		// return nil will commit the whole transaction
-		return affected, nil
+		return affected, err
 	})
 	if affected == nil || affected == 0 {
-		return 0
+		return 0, err
 	}
 
-	return affected.(int64)
+	return affected.(int64), err
 }
 
 // save model data to database by state field
-func (this *OrmBaseService) Save(mds ...interface{}) int64 {
-	affected, nil := this.Transaction(func(session repository.DbSession) (interface{}, error) {
+func (this *OrmBaseService) Save(mds ...interface{}) (int64, error) {
+	affected, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
 		var affected int64
+		var err error
 		for _, md := range mds {
 			if !reflect.IsPtr(md) && !reflect.IsSlice(md) {
 				panic(errors.New("DestinationNeedPtr"))
@@ -259,56 +270,59 @@ func (this *OrmBaseService) Save(mds ...interface{}) int64 {
 				switch state {
 				case baseentity.EntityState_New:
 					this.setId(md)
-					affected = session.Insert(md)
+					affected, err = session.Insert(md)
 				case baseentity.EntityState_Modified:
-					affected = session.Update(md, nil, "")
+					affected, err = session.Update(md, nil, "")
 				case baseentity.EntityState_Deleted:
-					affected = session.Delete(md, "")
+					affected, err = session.Delete(md, "")
 				}
+			}
+			if err != nil {
+				return 0, err
 			}
 		}
 		// return nil will commit the whole transaction
-		return affected, nil
+		return affected, err
 	})
 	if affected == nil || affected == 0 {
-		return 0
+		return 0, err
 	}
 
-	return affected.(int64)
+	return affected.(int64), err
 }
 
 //execute sql and get result
-func (this *OrmBaseService) Exec(clause string, params ...interface{}) sql.Result {
-	result, _ := this.Transaction(func(session repository.DbSession) (interface{}, error) {
-		result := session.Exec(clause, params...)
-		// return nil will commit the whole transaction
-		return result, nil
+func (this *OrmBaseService) Exec(clause string, params ...interface{}) (sql.Result, error) {
+	result, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
+		result, err := session.Exec(clause, params...)
+		// return nil will commit the whole transactionerr
+		return result, err
 	})
 
-	return result.(sql.Result)
+	return result.(sql.Result), err
 }
 
 //execute sql and get result
-func (this *OrmBaseService) Query(clause string, params ...interface{}) []map[string][]byte {
-	result, _ := this.Transaction(func(session repository.DbSession) (interface{}, error) {
-		result := session.Query(clause, params...)
+func (this *OrmBaseService) Query(clause string, params ...interface{}) ([]map[string][]byte, error) {
+	result, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
+		result, err := session.Query(clause, params...)
 
 		// return nil will commit the whole transaction
-		return result, nil
+		return result, err
 	})
 
-	return result.([]map[string][]byte)
+	return result.([]map[string][]byte), err
 }
 
-func (this *OrmBaseService) Count(bean interface{}, conds string, params ...interface{}) int64 {
-	result, _ := this.Transaction(func(session repository.DbSession) (interface{}, error) {
-		result := session.Count(bean, conds, params...)
+func (this *OrmBaseService) Count(bean interface{}, conds string, params ...interface{}) (int64, error) {
+	result, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
+		result, err := session.Count(bean, conds, params...)
 
 		// return nil will commit the whole transaction
-		return result, nil
+		return result, err
 	})
 
-	return result.(int64)
+	return result.(int64), err
 }
 
 /**
@@ -327,25 +341,25 @@ func (this *OrmBaseService) Transaction(fc func(s repository.DbSession) (interfa
 	defer fn()
 	//先获取新会话
 	var session = GetSession()
-	defer session.Close()
-	session.Begin()
 	var err error
+	defer session.Close()
+	err = session.Begin()
 	defer func() {
 		if p := recover(); p != nil {
 			logger.Sugar.Errorf("recover rollback:%s\r\n", p)
 			session.Rollback()
-			//panic(p) // re-throw panic after Rollback
+			panic(p) // re-throw panic after Rollback
 		} else if err != nil {
 			logger.Sugar.Errorf("error rollback:%s\r\n", err)
 			session.Rollback() // err is non-nil; don't change it
 		} else {
-			session.Commit() // err is nil; if Commit returns error update err
+			err = session.Commit() // err is nil; if Commit returns error update err
 		}
 	}()
 	// 执行在事务内的处理
 	result, err := fc(session)
 	if err != nil {
-		logger.Sugar.Errorf("Exception:%v", err)
+		logger.Sugar.Errorf("Exception:%v", err.Error())
 	}
 
 	return result, err

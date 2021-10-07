@@ -16,16 +16,16 @@ type BaseService interface {
 	//返回数组的指针
 	NewEntities(data []byte) (interface{}, error)
 	ParseJSON(data []byte) ([]interface{}, error)
-	Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) bool
+	Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) (bool,error)
 	Find(rowsSlicePtr interface{}, md interface{}, orderby string, from int, limit int, conds string, params ...interface{}) error
-	Insert(mds ...interface{}) int64
-	Update(md interface{}, columns []string, conds string, params ...interface{}) int64
-	Upsert(mds ...interface{}) int64
-	Delete(md interface{}, conds string, params ...interface{}) int64
-	Save(mds ...interface{}) int64
-	Exec(clause string, params ...interface{}) sql.Result
-	Query(clause string, params ...interface{}) []map[string][]byte
-	Count(bean interface{}, conds string, params ...interface{}) int64
+	Insert(mds ...interface{}) (int64,error)
+	Update(md interface{}, columns []string, conds string, params ...interface{}) (int64,error)
+	Upsert(mds ...interface{}) (int64,error)
+	Delete(md interface{}, conds string, params ...interface{}) (int64,error)
+	Save(mds ...interface{}) (int64,error)
+	Exec(clause string, params ...interface{}) (sql.Result,error)
+	Query(clause string, params ...interface{}) ([]map[string][]byte,error)
+	Count(bean interface{}, conds string, params ...interface{}) (int64,error)
 	Transaction(fc func(s repository.DbSession) (interface{}, error)) (interface{}, error)
 }
 

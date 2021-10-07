@@ -64,16 +64,18 @@ func NewGormSession() repository.DbSession {
 	return &GormSession{Session: s}
 }
 
-func (this *GormSession) Sync(bean ...interface{}) {
+func (this *GormSession) Sync(bean ...interface{}) error{
 	err := engine.AutoMigrate(bean...)
 	if err != nil {
 		logger.Sugar.Errorf("%v", err)
 	}
+
+	return err
 }
 
 // Get retrieve one record from database, bean's non-empty fields
 // will be as conditions
-func (this *GormSession) Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) bool {
+func (this *GormSession) Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) (bool,error) {
 	var found bool
 	var err error
 	var session = this.Session
@@ -88,10 +90,10 @@ func (this *GormSession) Get(dest interface{}, locked bool, orderby string, cond
 	}
 	result := session.First(dest)
 	if result.Error != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
 
-	return found
+	return found,err
 }
 
 // Find retrieve records from table, condiBeans's non-empty fields
@@ -119,21 +121,21 @@ func (this *GormSession) Find(rowsSlicePtr interface{}, md interface{}, orderby 
 }
 
 // insert model data to database
-func (this *GormSession) Insert(mds ...interface{}) int64 {
+func (this *GormSession) Insert(mds ...interface{}) (int64,error) {
 	var session = this.Session
 	session = session.Create(&mds)
 	if session.Error != nil {
-		panic(session.Error)
+		logger.Sugar.Errorf("%v", session.Error.Error())
 	}
 
-	return session.RowsAffected
+	return session.RowsAffected,session.Error
 }
 
 //第一个参数是更新的数据数组，当传入的为结构体指针时，只有非空和0的field才会被作为更新的字段
 //第二个参数指定要被更新的字段名称，即使非空和0的field也会被更新
 //不支持指定this.Session.Table(new(User))来指定表名，而是通过结构数组来指定，因此不支持map更新
 //在数据没有Id的时候，使用第三个参数条件bean作为条件
-func (this *GormSession) Update(md interface{}, columns []string, conds string, params ...interface{}) int64 {
+func (this *GormSession) Update(md interface{}, columns []string, conds string, params ...interface{}) (int64,error) {
 	var session = this.Session
 	var mds []interface{}
 	var ok bool
@@ -162,16 +164,16 @@ func (this *GormSession) Update(md interface{}, columns []string, conds string, 
 		}
 	}
 	if session.Error != nil {
-		panic(session.Error)
+		logger.Sugar.Errorf("%v", session.Error.Error())
 	}
 
-	return session.RowsAffected
+	return session.RowsAffected,session.Error
 }
 
 //第一个参数是删除的数据数组，当传入的为结构体指针时，非空和0的field会被作为删除的条件
 //不支持指定this.Session.Table(new(User))来指定表名，而是通过结构数组来指定，因此不支持map删除
 //在数据没有Id的时候，使用第二个参数作为条件
-func (this *GormSession) Delete(md interface{}, conds string, params ...interface{}) int64 {
+func (this *GormSession) Delete(md interface{}, conds string, params ...interface{}) (int64,error) {
 	var session = this.Session
 	var mds []interface{}
 	var ok bool
@@ -198,35 +200,35 @@ func (this *GormSession) Delete(md interface{}, conds string, params ...interfac
 		}
 	}
 	if session.Error != nil {
-		panic(session.Error)
+		logger.Sugar.Errorf("%v", session.Error.Error())
 	}
 
-	return session.RowsAffected
+	return session.RowsAffected,session.Error
 }
 
 //execute sql and get result
-func (this *GormSession) Exec(clause string, params ...interface{}) sql.Result {
+func (this *GormSession) Exec(clause string, params ...interface{}) (sql.Result,error) {
 	var session = this.Session
 	session = session.Exec(clause, params...)
 	if session.Error != nil {
-		panic(session.Error)
+		logger.Sugar.Errorf("%v", session.Error.Error())
 	}
 
-	return nil
+	return nil,session.Error
 }
 
 //execute sql and get result
-func (this *GormSession) Query(clause string, params ...interface{}) []map[string][]byte {
+func (this *GormSession) Query(clause string, params ...interface{}) ([]map[string][]byte,error) {
 	var session = this.Session
 	session = session.Raw(clause, params...)
 	if session.Error != nil {
-		panic(session.Error)
+		logger.Sugar.Errorf("%v", session.Error.Error())
 	}
 
-	return nil
+	return nil,session.Error
 }
 
-func (this *GormSession) Count(bean interface{}, conds string, params ...interface{}) int64 {
+func (this *GormSession) Count(bean interface{}, conds string, params ...interface{}) (int64,error) {
 	var session = this.Session
 	var count int64
 	session = session.Model(bean)
@@ -236,10 +238,10 @@ func (this *GormSession) Count(bean interface{}, conds string, params ...interfa
 		session = session.Count(&count)
 	}
 	if session.Error != nil {
-		panic(session.Error)
+		logger.Sugar.Errorf("%v", session.Error.Error())
 	}
 
-	return count
+	return count,session.Error
 }
 
 /**
@@ -251,69 +253,88 @@ func (this *GormSession) Count(bean interface{}, conds string, params ...interfa
         }
 	})
 */
-func (this *GormSession) Transaction(fc func(s repository.DbSession) error) {
+func (this *GormSession) Transaction(fc func(s repository.DbSession) error) error{
 	defer this.Close()
 	var session = this.Session
 	session = session.Begin()
 	if session.Error != nil {
-		panic(session.Error)
+		logger.Sugar.Errorf("%v", session.Error.Error())
 	}
 	defer func() {
 		if p := recover(); p != nil {
 			logger.Sugar.Errorf("recover rollback:%s\r\n", p)
 			session.Rollback()
+			if session.Error != nil {
+				logger.Sugar.Errorf("%v", session.Error.Error())
+			}
 			panic(p) // re-throw panic after Rollback
 		} else if session.Error != nil {
 			logger.Sugar.Errorf("error rollback:%s\r\n", session.Error)
 			session.Rollback() // err is non-nil; don't change it
+			if session.Error != nil {
+				logger.Sugar.Errorf("%v", session.Error.Error())
+			}
 		} else {
 			session = session.Commit() // err is nil; if Commit returns error update err
+			if session.Error != nil {
+				logger.Sugar.Errorf("%v", session.Error.Error())
+			}
 		}
 	}()
 	// 执行在事务内的处理
 	err := fc(this)
 	if err != nil {
-		panic(err)
+		logger.Sugar.Errorf("%v", err.Error())
 	}
+
+	return err
 }
 
-func (this *GormSession) Begin() {
+func (this *GormSession) Begin() error{
 	var session = this.Session
 	session = session.Begin()
 	if session.Error != nil {
-		panic(session.Error)
+		logger.Sugar.Errorf("%v", session.Error.Error())
 	}
+
+	return session.Error
 }
 
-func (this *GormSession) Rollback() {
+func (this *GormSession) Rollback() error{
 	var session = this.Session
 	session = session.Rollback()
 	if session.Error != nil {
-		panic(session.Error)
+		logger.Sugar.Errorf("%v", session.Error.Error())
 	}
+
+	return session.Error
 }
 
-func (this *GormSession) Commit() {
+func (this *GormSession) Commit() error{
 	var session = this.Session
 	session = session.Commit()
 	if session.Error != nil {
-		panic(session.Error)
+		logger.Sugar.Errorf("%v", session.Error.Error())
 	}
+
+	return session.Error
 }
 
-func (this *GormSession) Close() {
+func (this *GormSession) Close() error{
 	//err := this.Session.Close()
 	//if err != nil {
 	//	panic(err)
 	//}
+
+	return nil
 }
 
 //scan result
-func (this *GormSession) Scan(dest interface{}) *GormSession {
+func (this *GormSession) Scan(dest interface{}) (*GormSession,error) {
 
-	return this
+	return this,nil
 }
 
-func (this *GormSession) Complex(qb *repository.QueryBuilder, dest []interface{}) {
-
+func (this *GormSession) Complex(qb *repository.QueryBuilder, dest []interface{}) error{
+	return nil
 }
