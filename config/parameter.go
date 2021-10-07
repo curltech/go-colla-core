@@ -10,6 +10,7 @@ type appParams struct {
 	P2pProtocol   string
 	TimeFormat    string
 	EnableSession bool
+	EnableJwt     bool
 	SessionLog    bool
 	Template      string
 	Name          string
@@ -187,9 +188,10 @@ type proxyParams struct {
 }
 
 type rbacParams struct {
-	NonePath    []string
-	NoneAddress []string
-	Model       string
+	enableCasbin bool
+	NonePath     []string
+	NoneAddress  []string
+	Model        string
 	/**
 	只有在resource表中存在的资源才校验权限，否则，不校验
 	*/
@@ -292,6 +294,7 @@ func init() {
 	} else {
 		AppParams.SessionLog = false
 	}
+	AppParams.EnableJwt, _ = GetBool("app.enableJwt", false)
 	AppParams.Template, _ = GetString("app.template", "html")
 
 	P2pParams.ChainProtocolID, _ = GetString("p2p.chainProtocolID", "/chain/1.0.0")
@@ -481,6 +484,7 @@ func init() {
 	if noneAddress != "" {
 		RbacParams.NoneAddress = strings.Split(noneAddress, ",")
 	}
+	RbacParams.enableCasbin, _ = GetBool("rbac.enableCasbin", false)
 	RbacParams.Model, _ = GetString("rbac.model", "conf/rbac_model.conf")
 	RbacParams.ValidResource, _ = GetBool("rbac.validResource", true)
 	RbacParams.Credential, _ = GetString("rbac.userName", "credential_")
