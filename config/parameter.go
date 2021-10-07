@@ -188,7 +188,7 @@ type proxyParams struct {
 }
 
 type rbacParams struct {
-	enableCasbin bool
+	EnableCasbin bool
 	NonePath     []string
 	NoneAddress  []string
 	Model        string
@@ -484,7 +484,7 @@ func init() {
 	if noneAddress != "" {
 		RbacParams.NoneAddress = strings.Split(noneAddress, ",")
 	}
-	RbacParams.enableCasbin, _ = GetBool("rbac.enableCasbin", false)
+	RbacParams.EnableCasbin, _ = GetBool("rbac.enableCasbin", false)
 	RbacParams.Model, _ = GetString("rbac.model", "conf/rbac_model.conf")
 	RbacParams.ValidResource, _ = GetBool("rbac.validResource", true)
 	RbacParams.Credential, _ = GetString("rbac.userName", "credential_")
