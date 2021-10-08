@@ -52,7 +52,7 @@ func (this *SequenceService) NewEntities(data []byte) (interface{}, error) {
 func (this *SequenceService) GetSeqValue(name string) uint64 {
 	affected, _ := this.Transaction(func(session repository.DbSession) (interface{}, error) {
 		seq := &entity.Sequence{Name: name}
-		ok := session.Get(seq, true, "", "")
+		ok,_ := session.Get(seq, true, "", "")
 		var nextVal uint64
 		if ok {
 			if seq.Increment == 0 {
@@ -77,10 +77,10 @@ func (this *SequenceService) GetSeqValue(name string) uint64 {
 
 func (this *SequenceService) CreateSeq(name string, increment uint64, minValue uint64) int64 {
 	seq := &entity.Sequence{Name: name}
-	ok := this.Get(seq, false, "", "")
+	ok,_ := this.Get(seq, false, "", "")
 	if !ok {
 		seq := &entity.Sequence{Name: name, Increment: increment, MinValue: minValue}
-		affected := this.Insert(seq)
+		affected,_ := this.Insert(seq)
 
 		return affected
 	}
