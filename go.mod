@@ -43,7 +43,7 @@ require (
 	github.com/valyala/fasthttp v1.24.0
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.9
 	github.com/xwb1989/sqlparser v0.0.0-20180606152119-120387863bf2
-	github.com/yanyiwu/gojieba v1.1.2
+	//github.com/yanyiwu/gojieba v1.1.2
 	go.uber.org/zap v1.15.0
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect

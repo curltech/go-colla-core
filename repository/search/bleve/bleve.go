@@ -14,7 +14,7 @@ import (
 	"github.com/curltech/go-colla-core/util/collection"
 	"github.com/curltech/go-colla-core/util/reflect"
 	//"github.com/ttys3/gojieba-bleve"
-	"github.com/yanyiwu/gojieba"
+	//"github.com/yanyiwu/gojieba"
 	"os"
 )
 
@@ -62,33 +62,33 @@ func (this *bleveSession) init(indexName string) error {
 	return nil
 }
 
-func (this *bleveSession) zhJieba(indexMapping *mapping.IndexMappingImpl) error {
-	err := indexMapping.AddCustomTokenizer("gojieba",
-		map[string]interface{}{
-			"dictpath":     gojieba.DICT_PATH,
-			"hmmpath":      gojieba.HMM_PATH,
-			"userdictpath": gojieba.USER_DICT_PATH,
-			"idf":          gojieba.IDF_PATH,
-			"stop_words":   gojieba.STOP_WORDS_PATH,
-			"type":         "gojieba",
-		},
-	)
-	if err != nil {
-		return err
-	}
-	err = indexMapping.AddCustomAnalyzer("gojieba",
-		map[string]interface{}{
-			"type":      "gojieba",
-			"tokenizer": "gojieba",
-		},
-	)
-	if err != nil {
-		return err
-	}
-	indexMapping.DefaultAnalyzer = "gojieba"
-
-	return nil
-}
+//func (this *bleveSession) zhJieba(indexMapping *mapping.IndexMappingImpl) error {
+//	err := indexMapping.AddCustomTokenizer("gojieba",
+//		map[string]interface{}{
+//			"dictpath":     gojieba.DICT_PATH,
+//			"hmmpath":      gojieba.HMM_PATH,
+//			"userdictpath": gojieba.USER_DICT_PATH,
+//			"idf":          gojieba.IDF_PATH,
+//			"stop_words":   gojieba.STOP_WORDS_PATH,
+//			"type":         "gojieba",
+//		},
+//	)
+//	if err != nil {
+//		return err
+//	}
+//	err = indexMapping.AddCustomAnalyzer("gojieba",
+//		map[string]interface{}{
+//			"type":      "gojieba",
+//			"tokenizer": "gojieba",
+//		},
+//	)
+//	if err != nil {
+//		return err
+//	}
+//	indexMapping.DefaultAnalyzer = "gojieba"
+//
+//	return nil
+//}
 
 func (this *bleveSession) zhGse(indexMapping *mapping.IndexMappingImpl) error {
 	err := indexMapping.AddCustomTokenizer("gse", map[string]interface{}{
