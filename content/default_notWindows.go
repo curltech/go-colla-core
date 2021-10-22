@@ -47,6 +47,8 @@ func (this *fileContent) Write(contentId string, data []byte) error {
 	pathname, filename := this.getFilename(contentId)
 	existed := exist(pathname)
 	if !existed && data != nil {
+		mask := syscall.Umask(0)
+		defer syscall.Umask(mask)
 		err := os.MkdirAll(pathname, /*this.filePerm*/os.ModePerm)
 		if err != nil {
 			logger.Sugar.Errorf(fmt.Sprintf("failed to MkdirAll:%v", err))
