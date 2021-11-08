@@ -41,12 +41,15 @@ func GetOrmBaseService() BaseService {
 	return ormBaseService
 }
 
-func GetSeqValue(name string) uint64 {
+func GetSeqValue(name string) (uint64, error) {
 	if config.DatabaseParams.Sequence == "table" {
 		return GetSequenceService().GetSeqValue(name)
 	} else if config.DatabaseParams.Sequence == "seq" {
 		sql := fmt.Sprintf("select nextval('%v')", name)
-		result, _ := ormBaseService.Query(sql)
+		result, err := ormBaseService.Query(sql)
+		if err != nil {
+			return 0, err
+		}
 
 		if len(result) > 0 {
 			r := result[0]
@@ -57,12 +60,13 @@ func GetSeqValue(name string) uint64 {
 			}
 			logger.Sugar.Infof("from sequence %v get id %v", name, i64)
 
-			return i64
+			return i64, err
 		} else {
 			logger.Sugar.Errorf("no query result")
+			return 0, err
 		}
 	}
-	return 0
+	return 0, nil
 }
 
 func (this *OrmBaseService) NewEntity(data []byte) (interface{}, error) {

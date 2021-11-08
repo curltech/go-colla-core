@@ -16,16 +16,16 @@ type BaseService interface {
 	//返回数组的指针
 	NewEntities(data []byte) (interface{}, error)
 	ParseJSON(data []byte) ([]interface{}, error)
-	Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) (bool,error)
+	Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) (bool, error)
 	Find(rowsSlicePtr interface{}, md interface{}, orderby string, from int, limit int, conds string, params ...interface{}) error
-	Insert(mds ...interface{}) (int64,error)
-	Update(md interface{}, columns []string, conds string, params ...interface{}) (int64,error)
-	Upsert(mds ...interface{}) (int64,error)
-	Delete(md interface{}, conds string, params ...interface{}) (int64,error)
-	Save(mds ...interface{}) (int64,error)
-	Exec(clause string, params ...interface{}) (sql.Result,error)
-	Query(clause string, params ...interface{}) ([]map[string][]byte,error)
-	Count(bean interface{}, conds string, params ...interface{}) (int64,error)
+	Insert(mds ...interface{}) (int64, error)
+	Update(md interface{}, columns []string, conds string, params ...interface{}) (int64, error)
+	Upsert(mds ...interface{}) (int64, error)
+	Delete(md interface{}, conds string, params ...interface{}) (int64, error)
+	Save(mds ...interface{}) (int64, error)
+	Exec(clause string, params ...interface{}) (sql.Result, error)
+	Query(clause string, params ...interface{}) ([]map[string][]byte, error)
+	Count(bean interface{}, conds string, params ...interface{}) (int64, error)
 	Transaction(fc func(s repository.DbSession) (interface{}, error)) (interface{}, error)
 }
 
@@ -75,7 +75,10 @@ func GetSeq(name string, count int) []uint64 {
 		}
 		//var i uint64
 		for i := 0; i < step; i++ {
-			id := GetSeqValue(name)
+			id, err := GetSeqValue(name)
+			if err != nil {
+				panic(err)
+			}
 			if id != 0 {
 				base := id - increment + 1
 				var j uint64

@@ -49,10 +49,13 @@ func (this *SequenceService) NewEntities(data []byte) (interface{}, error) {
 	return &entities, nil
 }
 
-func (this *SequenceService) GetSeqValue(name string) uint64 {
-	affected, _ := this.Transaction(func(session repository.DbSession) (interface{}, error) {
+func (this *SequenceService) GetSeqValue(name string) (uint64, error) {
+	affected, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
 		seq := &entity.Sequence{Name: name}
-		ok,_ := session.Get(seq, true, "", "")
+		ok, err := session.Get(seq, true, "", "")
+		if !ok || err != nil {
+			return 0, err
+		}
 		var nextVal uint64
 		if ok {
 			if seq.Increment == 0 {
@@ -63,24 +66,26 @@ func (this *SequenceService) GetSeqValue(name string) uint64 {
 				nextVal = seq.MinValue
 			}
 			seq.CurrentVal = nextVal
-			session.Update(seq, nil, "")
+			_, err = session.Update(seq, nil, "")
 		}
-		return nextVal, nil
+		return nextVal, err
 	})
-
+	if err != nil {
+		return 0, err
+	}
 	if affected == nil || affected == 0 {
-		return 0
+		return 0, nil
 	}
 
-	return affected.(uint64)
+	return affected.(uint64), nil
 }
 
 func (this *SequenceService) CreateSeq(name string, increment uint64, minValue uint64) int64 {
 	seq := &entity.Sequence{Name: name}
-	ok,_ := this.Get(seq, false, "", "")
+	ok, _ := this.Get(seq, false, "", "")
 	if !ok {
 		seq := &entity.Sequence{Name: name, Increment: increment, MinValue: minValue}
-		affected,_ := this.Insert(seq)
+		affected, _ := this.Insert(seq)
 
 		return affected
 	}
