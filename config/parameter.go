@@ -40,6 +40,7 @@ type databaseParams struct {
 	MaxIdleConns    int
 	MaxOpenConns    int
 	ConnMaxLifetime int
+	ConnMaxIdleTime int
 	ShowSQL         bool
 	LogLevel        int
 	Readtransaction bool
@@ -371,6 +372,7 @@ func init() {
 	DatabaseParams.MaxIdleConns, _ = GetInt("database.maxIdleConns")
 	DatabaseParams.MaxOpenConns, _ = GetInt("database.maxOpenConns")
 	DatabaseParams.ConnMaxLifetime, _ = GetInt("database.connMaxLifetime")
+	DatabaseParams.ConnMaxIdleTime, _ = GetInt("database.connMaxIdleTime")
 	DatabaseParams.ShowSQL, _ = GetBool("database.showSQL", false)
 	DatabaseParams.Orm, _ = GetString("database.orm", "xorm")
 	DatabaseParams.Sequence, _ = GetString("database.sequence", "seq")

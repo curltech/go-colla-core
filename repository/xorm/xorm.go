@@ -87,7 +87,7 @@ func init() {
 	engine.SetMaxOpenConns(maxOpenConns)
 
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
-	engine.SetConnMaxLifetime(time.Duration(connMaxLifetime) * time.Hour)
+	engine.SetConnMaxLifetime(time.Duration(connMaxLifetime) * time.Second)
 
 	//engine.TZLocation, _ = time.LoadLocation(timeZone)
 	//engine.DatabaseTZ, _ = time.LoadLocation(timeZone)
