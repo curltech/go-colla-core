@@ -198,6 +198,31 @@ func (this *OrmBaseService) Insert(mds ...interface{}) (int64, error) {
 	return affected.(int64), err
 }
 
+func (this *OrmBaseService) BatchInsert(mds ...interface{}) (int64, error) {
+	batch := 1000
+	ms := make([]interface{}, 0)
+	var count int64
+	for i := 0; i < len(mds); i = i + batch {
+		for j := 0; j < batch; j++ {
+			if i+j < len(mds) {
+				md := mds[i+j]
+				ms = append(ms, md)
+			}
+		}
+		c, err := this.Insert(ms...)
+		if err != nil {
+			logger.Sugar.Errorf("Insert database error:%v", err.Error())
+			return count, err
+		} else {
+			logger.Sugar.Infof("Insert database record:%v", len(ms))
+		}
+		count = count + c
+		ms = make([]interface{}, 0)
+	}
+
+	return count, nil
+}
+
 // update model to database.
 // cols set the columns those want to update.
 func (this *OrmBaseService) Update(md interface{}, columns []string, conds string, params ...interface{}) (int64, error) {

@@ -19,6 +19,7 @@ type BaseService interface {
 	Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) (bool, error)
 	Find(rowsSlicePtr interface{}, md interface{}, orderby string, from int, limit int, conds string, params ...interface{}) error
 	Insert(mds ...interface{}) (int64, error)
+	BatchInsert(mds ...interface{}) (int64, error)
 	Update(md interface{}, columns []string, conds string, params ...interface{}) (int64, error)
 	Upsert(mds ...interface{}) (int64, error)
 	Delete(md interface{}, conds string, params ...interface{}) (int64, error)
