@@ -254,7 +254,9 @@ func (this *OrmBaseService) Upsert(mds ...interface{}) (int64, error) {
 			} else {
 				affected, err = session.Update(md, nil, "")
 			}
-			if err != nil {
+			if err == nil {
+				affected++
+			} else {
 				return 0, err
 			}
 		}
