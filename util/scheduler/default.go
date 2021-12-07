@@ -7,7 +7,7 @@ import (
 )
 
 func Scheduler(d time.Duration, fn interface{}, args []interface{}) {
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(d * time.Second)
 	for v := range ticker.C { // 循环channel
 		logger.Sugar.Infof("start invoke in %v", v)
 		go reflect.Invoke(fn, args)
