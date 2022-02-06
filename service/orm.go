@@ -254,10 +254,10 @@ func (this *OrmBaseService) Upsert(mds ...interface{}) (int64, error) {
 			} else {
 				affected, err = session.Update(md, nil, "")
 			}
-			if err == nil {
-				affected++
-			} else {
+			if err != nil {
 				return 0, err
+			} else {
+				affected++
 			}
 		}
 		// return nil will commit the whole transaction
