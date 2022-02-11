@@ -329,6 +329,9 @@ func (this *OrmBaseService) Exec(clause string, params ...interface{}) (sql.Resu
 		// return nil will commit the whole transactionerr
 		return result, err
 	})
+	if result == nil {
+		return nil, err
+	}
 
 	return result.(sql.Result), err
 }
@@ -341,6 +344,9 @@ func (this *OrmBaseService) Query(clause string, params ...interface{}) ([]map[s
 		// return nil will commit the whole transaction
 		return result, err
 	})
+	if result == nil {
+		return nil, err
+	}
 
 	return result.([]map[string][]byte), err
 }
@@ -352,6 +358,9 @@ func (this *OrmBaseService) Count(bean interface{}, conds string, params ...inte
 		// return nil will commit the whole transaction
 		return result, err
 	})
+	if result == nil {
+		return 0, err
+	}
 
 	return result.(int64), err
 }
