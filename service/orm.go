@@ -353,6 +353,9 @@ func (this *OrmBaseService) Query(clause string, params ...interface{}) ([]map[s
 
 func (this *OrmBaseService) Count(bean interface{}, conds string, params ...interface{}) (int64, error) {
 	result, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
+		if bean == nil {
+			return 0, errors.New("condiBean can't be nil")
+		}
 		result, err := session.Count(bean, conds, params...)
 
 		// return nil will commit the whole transaction
@@ -377,7 +380,7 @@ func (this *OrmBaseService) Count(bean interface{}, conds string, params ...inte
 func (this *OrmBaseService) Transaction(fc func(s repository.DbSession) (interface{}, error)) (interface{}, error) {
 	id := security.UUID()
 	msg := fmt.Sprintf("XORM Transaction %v :", id)
-	fn := debug.Trace(msg)
+	fn := debug.TraceDebug(msg)
 	defer fn()
 	//先获取新会话
 	var session = GetSession()
