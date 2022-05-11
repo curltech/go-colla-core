@@ -3,7 +3,7 @@ package scheduler
 import (
 	"github.com/curltech/go-colla-core/logger"
 	"github.com/curltech/go-colla-core/util/reflect"
-	"github.com/robfig/cron/v3"
+	"github.com/robfig/cron"
 	"time"
 )
 

@@ -57,6 +57,8 @@ require (
 	xorm.io/xorm v1.0.5
 )
 
+require github.com/robfig/cron v1.2.0
+
 require (
 	github.com/ProtonMail/go-mime v0.0.0-20190923161245-9b5a4261663a // indirect
 	github.com/RoaringBitmap/roaring v0.4.23 // indirect
@@ -101,7 +103,6 @@ require (
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/philhofer/fwd v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/spacemonkeygo/spacelog v0.0.0-20180420211403-2296661a0572 // indirect
 	github.com/steveyen/gtreap v0.1.0 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20200815110645-5c35d600f0ca // indirect
