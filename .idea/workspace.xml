@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc1cf7e7-837a-4124-8d3a-5e500e0dd1a0" name="Default Changelist" comment="修改ormupsert的计数bug">
-      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/repository/search/bleve/bleve.go" beforeDir="false" afterPath="$PROJECT_DIR$/repository/search/bleve/bleve.go.bak" afterDir="false" />
-    </list>
+    <list default="true" id="cc1cf7e7-837a-4124-8d3a-5e500e0dd1a0" name="Default Changelist" comment="升级" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -102,7 +96,8 @@
     <MESSAGE value="加入thread pool" />
     <MESSAGE value="加入batchinsert" />
     <MESSAGE value="修改ormupsert的计数bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="修改ormupsert的计数bug" />
+    <MESSAGE value="升级" />
+    <option name="LAST_COMMIT_MESSAGE" value="升级" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
