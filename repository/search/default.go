@@ -2,7 +2,6 @@ package search
 
 import (
 	"github.com/curltech/go-colla-core/config"
-	"github.com/curltech/go-colla-core/repository/search/bleve"
 	"github.com/curltech/go-colla-core/repository/search/elastic"
 )
 
@@ -17,9 +16,9 @@ type SearchSession interface {
 
 func GetSearchSession() SearchSession {
 	if config.SearchParams.Mode == "bleve" {
-		bleve.BleveSession.Start()
-
-		return bleve.BleveSession
+		//bleve.BleveSession.Start()
+		//
+		//return bleve.BleveSession
 	} else if config.SearchParams.Mode == "elastic" {
 		elastic.ElasticSearchSession.Start()
 
