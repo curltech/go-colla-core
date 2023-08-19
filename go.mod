@@ -45,7 +45,7 @@ require (
 )
 
 require (
-	github.com/libp2p/go-libp2p v0.29.1-0.20230819013703-4a0c385e5143
+	github.com/libp2p/go-libp2p v0.29.2
 	github.com/robfig/cron v1.2.0
 	github.com/rqlite/rqlite v4.6.0+incompatible
 )
@@ -84,6 +84,7 @@ require (
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/minio/sha256-simd v1.0.1 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+	github.com/multiformats/go-multiaddr v0.11.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20200815110645-5c35d600f0ca // indirect
 	github.com/vmihailenco/tagparser v0.1.2 // indirect
