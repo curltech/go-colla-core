@@ -144,7 +144,8 @@ type libp2pParams struct {
 	Quorum                   int
 }
 
-/**
+/*
+*
 专用于iris的配置
 */
 type serverParams struct {

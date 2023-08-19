@@ -25,7 +25,8 @@ type Session struct {
 	value        map[interface{}]interface{} //session里面存储的值
 }
 
-/**
+/*
+*
 Set(key, value interface{}) error //设置Session
 Get(key interface{}) interface{}  //获取Session
 Delete(key interface{}) error     //删除Session
@@ -56,7 +57,8 @@ func (this *Session) IsNew() bool {
 	return this.isNew
 }
 
-/**
+/*
+*
 会话池用于存放连接上来的多个会话，会话管理器Start的时候如果是新会话，将放入会话池
 */
 type SessionPool struct {
@@ -65,7 +67,8 @@ type SessionPool struct {
 	list     *list.List               //用来做gc
 }
 
-/**
+/*
+*
 SessionInit(sid string) (Session, error)
 SessionRead(sid string) (Session, error)
 SessionDestroy(sid string) error
@@ -128,7 +131,8 @@ func (this *SessionPool) Update(sid string) error {
 
 var sessionPools = make(map[string]*SessionPool)
 
-/**
+/*
+*
 会话管理器获取当前会话，GetDefault().Start()，从而进一步获取会话id，会话变量的存取
 */
 type SessionManager struct {
@@ -175,7 +179,7 @@ func (manager *SessionManager) sessionId() string {
 	return base64.URLEncoding.EncodeToString(b)
 }
 
-//根据当前请求的cookie中判断是否存在有效的session, 不存在则创建
+// 根据当前请求的cookie中判断是否存在有效的session, 不存在则创建
 func (this *SessionManager) Start(w http.ResponseWriter, r *http.Request) (session *Session) {
 	//为该方法加锁
 	this.lock.Lock()
@@ -223,7 +227,7 @@ func (this *SessionManager) SessionDestroy(w http.ResponseWriter, r *http.Reques
 	http.SetCookie(w, &newCookie)
 }
 
-//记录该session被访问的次数
+// 记录该session被访问的次数
 func test(w http.ResponseWriter, r *http.Request) {
 	sess := sessionManager.Start(w, r)   //获取session实例
 	createTime := sess.Get("createTime") //获得该session的创建时间

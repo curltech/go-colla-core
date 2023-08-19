@@ -1,6 +1,7 @@
 package entity
 
-/**
+/*
+*
 活动会话的数据
 */
 type Sequence struct {

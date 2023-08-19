@@ -115,7 +115,8 @@ const (
 	JsonFieldName_Path       string = "path"
 )
 
-/**
+/*
+*
 以下是对数据进行比较的代码
 */
 type EntitySnapshot struct {

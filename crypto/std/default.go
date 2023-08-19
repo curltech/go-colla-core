@@ -46,7 +46,8 @@ func GenerateSecretKey(length int) string {
 	return security.RandString(length)
 }
 
-/**
+/*
+*
 对对称密钥用对方公钥加密
 */
 func WriteSecretKey(key []byte, publicKey *ecdsa.PublicKey) []byte {
@@ -342,14 +343,15 @@ func Decrypt(privateKey interface{}, ciphertext []byte) []byte {
 	return nil
 }
 
-/**
- * 对称加密
- *
- * @param key  加密的密钥
-	The key argument should be the AES key, either 16, 24, or 32 bytes to select AES-128, AES-192, or AES-256
- * @param data 待加密的明文数据
- * @return 加密后的数据
- * @throws EncryptException
+/*
+*
+  - 对称加密
+    *
+  - @param key  加密的密钥
+    The key argument should be the AES key, either 16, 24, or 32 bytes to select AES-128, AES-192, or AES-256
+  - @param data 待加密的明文数据
+  - @return 加密后的数据
+  - @throws EncryptException
 */
 func EncryptSymmetrical(key []byte, plaintext []byte, mode string) []byte {
 	if mode == "CBC" {
@@ -552,7 +554,8 @@ func Verify(publicKey *ecdsa.PublicKey, plaintext string, rtext, stext []byte) b
 	return verify
 }
 
-/**
+/*
+*
 对对称密钥用对方公钥加密
 */
 func EncryptKey(key []byte, publicKey interface{}) []byte {

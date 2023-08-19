@@ -33,7 +33,8 @@ func GenerateSecretKey(size int) (sessionKey interface{}) {
 	return sessionKey
 }
 
-/**
+/*
+*
 对对称密钥用对方公钥加密
 */
 func WriteSecretKey(sessionKey *crypto.SessionKey, publicKey *crypto.Key, password []byte) []byte {

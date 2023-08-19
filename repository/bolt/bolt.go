@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-//每次事务开始时创建新会话
+// 每次事务开始时创建新会话
 type BoltSession struct {
 	tx *bolt.Tx
 }
@@ -38,13 +38,13 @@ func NewBoltSession() repository.DbSession {
 	return &BoltSession{tx: tx}
 }
 
-func (this *BoltSession) Sync(bean ...interface{}) error{
+func (this *BoltSession) Sync(bean ...interface{}) error {
 	return nil
 }
 
 // Get retrieve one record from database, bean's non-empty fields
 // will be as conditions
-func (this *BoltSession) Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) (bool,error) {
+func (this *BoltSession) Get(dest interface{}, locked bool, orderby string, conds string, params ...interface{}) (bool, error) {
 	id, _ := reflect.GetValue(dest, baseentity.FieldName_Id)
 	key := fmt.Sprintf("%v", id)
 	var bucketname string
@@ -64,7 +64,7 @@ func (this *BoltSession) Get(dest interface{}, locked bool, orderby string, cond
 		logger.Sugar.Errorf("%v", err.Error())
 	}
 
-	return found,err
+	return found, err
 }
 
 // Find retrieve records from table, condiBeans's non-empty fields
@@ -81,7 +81,7 @@ func (this *BoltSession) Find(rowsSlicePtr interface{}, md interface{}, orderby 
 }
 
 // insert model data to database
-func (this *BoltSession) Insert(mds ...interface{}) (int64,error) {
+func (this *BoltSession) Insert(mds ...interface{}) (int64, error) {
 	var err error
 	var affected int64
 	for md := range mds {
@@ -106,12 +106,12 @@ func (this *BoltSession) Insert(mds ...interface{}) (int64,error) {
 		logger.Sugar.Errorf("%v", err.Error())
 	}
 
-	return affected,err
+	return affected, err
 }
 
 // update model to database.
 // cols set the columns those want to update.
-func (this *BoltSession) Update(md interface{}, columns []string, conds string, params ...interface{}) (int64,error) {
+func (this *BoltSession) Update(md interface{}, columns []string, conds string, params ...interface{}) (int64, error) {
 	var err error
 	var affected int64
 	var mds []interface{}
@@ -148,12 +148,12 @@ func (this *BoltSession) Update(md interface{}, columns []string, conds string, 
 		logger.Sugar.Errorf("%v", err.Error())
 	}
 
-	return affected,err
+	return affected, err
 }
 
 // delete model in database
 // Delete records, bean's non-empty fields are conditions
-func (this *BoltSession) Delete(md interface{}, conds string, params ...interface{}) (int64,error) {
+func (this *BoltSession) Delete(md interface{}, conds string, params ...interface{}) (int64, error) {
 	var err error
 	var affected int64
 	var mds []interface{}
@@ -187,37 +187,39 @@ func (this *BoltSession) Delete(md interface{}, conds string, params ...interfac
 		logger.Sugar.Errorf("%v", err.Error())
 	}
 
-	return affected,err
+	return affected, err
 }
 
-//execute sql and get result
-func (this *BoltSession) Exec(clause string, params ...interface{}) (sql.Result,error) {
+// execute sql and get result
+func (this *BoltSession) Exec(clause string, params ...interface{}) (sql.Result, error) {
 
-	return nil,nil
+	return nil, nil
 }
 
-//execute sql and get result
-func (this *BoltSession) Query(clause string, params ...interface{}) ([]map[string][]byte,error) {
+// execute sql and get result
+func (this *BoltSession) Query(clause string, params ...interface{}) ([]map[string][]byte, error) {
 
-	return nil,nil
+	return nil, nil
 }
 
-func (this *BoltSession) Count(bean interface{}, conds string, params ...interface{}) (int64,error) {
+func (this *BoltSession) Count(bean interface{}, conds string, params ...interface{}) (int64, error) {
 	var count int64
 
-	return count,nil
+	return count, nil
 }
 
-/**
-	Transaction 的 f 参数类型为 一个在事务内处理的函数
-    因此可以将 f 函数作为参数传入 Transaction 函数中。
-    return Transaction(func(s *XormSession) error {
-        if _,error := session.Insert(User{ID:5,Version:"abc"}); error != nil{
-            return error
-        }
-	})
+/*
+*
+
+		Transaction 的 f 参数类型为 一个在事务内处理的函数
+	    因此可以将 f 函数作为参数传入 Transaction 函数中。
+	    return Transaction(func(s *XormSession) error {
+	        if _,error := session.Insert(User{ID:5,Version:"abc"}); error != nil{
+	            return error
+	        }
+		})
 */
-func (this *BoltSession) Transaction(fc func(s repository.DbSession) error) error{
+func (this *BoltSession) Transaction(fc func(s repository.DbSession) error) error {
 	defer this.Close()
 	tx, err := boltdb.Begin(true)
 	if err != nil {
@@ -244,7 +246,7 @@ func (this *BoltSession) Transaction(fc func(s repository.DbSession) error) erro
 	return err
 }
 
-func (this *BoltSession) Begin() error{
+func (this *BoltSession) Begin() error {
 	tx, err := boltdb.Begin(true)
 	if err != nil {
 		logger.Sugar.Errorf("%v", err.Error())
@@ -254,7 +256,7 @@ func (this *BoltSession) Begin() error{
 	return err
 }
 
-func (this *BoltSession) Rollback() error{
+func (this *BoltSession) Rollback() error {
 	err := this.tx.Rollback()
 	if err != nil {
 		logger.Sugar.Errorf("%v", err.Error())
@@ -263,7 +265,7 @@ func (this *BoltSession) Rollback() error{
 	return err
 }
 
-func (this *BoltSession) Commit() error{
+func (this *BoltSession) Commit() error {
 	err := this.tx.Commit()
 	if err != nil {
 		logger.Sugar.Errorf("%v", err.Error())
@@ -272,14 +274,14 @@ func (this *BoltSession) Commit() error{
 	return err
 }
 
-func (this *BoltSession) Close() error{
+func (this *BoltSession) Close() error {
 	return nil
 }
 
-//scan result
-func (this *BoltSession) Scan(dest interface{}) (*BoltSession,error) {
+// scan result
+func (this *BoltSession) Scan(dest interface{}) (*BoltSession, error) {
 
-	return this,nil
+	return this, nil
 }
 
 func (this *BoltSession) Complex(qb *repository.QueryBuilder, dest []interface{}) error {

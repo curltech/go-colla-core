@@ -1,3 +1,4 @@
+//go:build windows
 // +build windows
 
 package content
@@ -46,7 +47,7 @@ func (this *fileContent) Write(contentId string, data []byte) error {
 	pathname, filename := this.getFilename(contentId)
 	existed := exist(pathname)
 	if !existed && data != nil {
-		err := os.MkdirAll(pathname, /*this.filePerm*/os.ModePerm)
+		err := os.MkdirAll(pathname /*this.filePerm*/, os.ModePerm)
 		if err != nil {
 			logger.Sugar.Errorf(fmt.Sprintf("failed to MkdirAll:%v", err))
 			return errors.New(fmt.Sprintf("failed to MkdirAll:%v", err))

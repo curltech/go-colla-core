@@ -48,7 +48,8 @@ func parseYAML(filename string) map[string]interface{} {
 	return conf
 }
 
-/**
+/*
+*
 根据启动参数来确定当前应用的名称，从而能够读取特定的配置参数
 */
 var appName string

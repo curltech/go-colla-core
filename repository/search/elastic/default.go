@@ -21,7 +21,7 @@ type defaultSearchSession struct {
 
 var DefaultSearchSession *defaultSearchSession = &defaultSearchSession{}
 
-//初始化
+// 初始化
 func (this *defaultSearchSession) Start() {
 	if this.es != nil {
 		return
@@ -77,7 +77,7 @@ func (this *defaultSearchSession) Index(indexName string, mds ...interface{}) er
 	return err
 }
 
-//删除
+// 删除
 func (this *defaultSearchSession) Delete(indexName string, ids ...string) error {
 	var err error
 	wg := sync.WaitGroup{}
@@ -104,7 +104,7 @@ func (this *defaultSearchSession) Delete(indexName string, ids ...string) error 
 	return err
 }
 
-//修改
+// 修改
 func (this *defaultSearchSession) Update(indexName string, mds ...interface{}) error {
 	var err error
 	wg := sync.WaitGroup{}
@@ -134,7 +134,7 @@ func (this *defaultSearchSession) Update(indexName string, mds ...interface{}) e
 	return err
 }
 
-//查找
+// 查找
 func (this *defaultSearchSession) Get(indexName string, id string) (map[string]interface{}, error) {
 	//通过id查找
 	result, err := this.es.Get().Index(indexName).Id(id).Do(context.Background())
@@ -148,7 +148,8 @@ func (this *defaultSearchSession) Get(indexName string, id string) (map[string]i
 	return collection.StructToMap(result, nil), nil
 }
 
-/**
+/*
+*
 标准检索json ES query查询
 */
 func (this *defaultSearchSession) Query(indexName string, query string, from int, limit int) (map[string]interface{}, error) {

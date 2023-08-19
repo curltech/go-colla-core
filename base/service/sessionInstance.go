@@ -7,7 +7,8 @@ import (
 	"github.com/curltech/go-colla-core/util/message"
 )
 
-/**
+/*
+*
 同步表结构，服务继承基本服务的方法
 */
 type SessionInstanceService struct {

@@ -84,7 +84,7 @@ type Queue struct {
 	mutex  sync.Mutex // 对queue关闭上锁
 }
 
-//创建链列（数据）
+// 创建链列（数据）
 func (queue *Queue) Create(Data ...interface{}) {
 	if len(Data) == 0 {
 		return
@@ -96,7 +96,7 @@ func (queue *Queue) Create(Data ...interface{}) {
 	}
 }
 
-//入列(insert)
+// 入列(insert)
 func (queue *Queue) Push(Data interface{}) {
 	if Data == nil {
 		return
@@ -116,7 +116,7 @@ func (queue *Queue) Push(Data interface{}) {
 	queue.Length++
 }
 
-//出队(delete)
+// 出队(delete)
 func (queue *Queue) Pop() interface{} {
 	queue.mutex.Lock()
 	defer queue.mutex.Unlock()

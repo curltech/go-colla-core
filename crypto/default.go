@@ -1,8 +1,8 @@
 package crypto
 
 import (
-	libp2pcrypto "github.com/libp2p/go-libp2p-core/crypto"
-	pb "github.com/libp2p/go-libp2p-core/crypto/pb"
+	libp2pcrypto "github.com/libp2p/go-libp2p/core/crypto"
+	pb "github.com/libp2p/go-libp2p/core/crypto/pb"
 )
 
 type SecurityContext struct {

@@ -322,7 +322,7 @@ func (this *OrmBaseService) Save(mds ...interface{}) (int64, error) {
 	return affected.(int64), err
 }
 
-//execute sql and get result
+// execute sql and get result
 func (this *OrmBaseService) Exec(clause string, params ...interface{}) (sql.Result, error) {
 	result, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
 		result, err := session.Exec(clause, params...)
@@ -336,7 +336,7 @@ func (this *OrmBaseService) Exec(clause string, params ...interface{}) (sql.Resu
 	return result.(sql.Result), err
 }
 
-//execute sql and get result
+// execute sql and get result
 func (this *OrmBaseService) Query(clause string, params ...interface{}) ([]map[string][]byte, error) {
 	result, err := this.Transaction(func(session repository.DbSession) (interface{}, error) {
 		result, err := session.Query(clause, params...)
@@ -368,14 +368,16 @@ func (this *OrmBaseService) Count(bean interface{}, conds string, params ...inte
 	return result.(int64), err
 }
 
-/**
-	Transaction 的 f 参数类型为 一个在事务内处理的函数
-    因此可以将 f 函数作为参数传入 Transaction 函数中。
-    return Transaction(func(s *BaseService) error {
-        if _,error := session.Insert(User{ID:5,Version:"abc"}); error != nil{
-            return error
-        }
-	})
+/*
+*
+
+		Transaction 的 f 参数类型为 一个在事务内处理的函数
+	    因此可以将 f 函数作为参数传入 Transaction 函数中。
+	    return Transaction(func(s *BaseService) error {
+	        if _,error := session.Insert(User{ID:5,Version:"abc"}); error != nil{
+	            return error
+	        }
+		})
 */
 func (this *OrmBaseService) Transaction(fc func(s repository.DbSession) (interface{}, error)) (interface{}, error) {
 	id := security.UUID()
@@ -408,7 +410,8 @@ func (this *OrmBaseService) Transaction(fc func(s repository.DbSession) (interfa
 	return result, err
 }
 
-/**
+/*
+*
 导入excel格式的数据
 */
 func (this *OrmBaseService) Import(filenames []string) error {

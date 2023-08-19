@@ -22,7 +22,8 @@ type Node struct {
 
 var node *Node
 
-/**
+/*
+*
 创建新的节点
 */
 func CreateNode(id string, address string) (*Node, error) {
@@ -63,13 +64,15 @@ func newRaftTransport(address string) (*raft.NetworkTransport, error) {
 	return transport, nil
 }
 
-/**
+/*
+*
 FSM需要实现三个方法
 */
 type StoreFSM struct {
 }
 
-/**
+/*
+*
 执行一个操作日志，包含数据或者sql
 */
 func (f *StoreFSM) Apply(logEntry *raft.Log) interface{} {
@@ -87,7 +90,8 @@ func (f *StoreFSM) Apply(logEntry *raft.Log) interface{} {
 	return nil
 }
 
-/**
+/*
+*
 产生快照
 */
 func (f *StoreFSM) Snapshot() (raft.FSMSnapshot, error) {
@@ -96,7 +100,8 @@ func (f *StoreFSM) Snapshot() (raft.FSMSnapshot, error) {
 	return snapshot, nil
 }
 
-/**
+/*
+*
 从快照恢复
 */
 func (f *StoreFSM) Restore(serialized io.ReadCloser) error {
@@ -106,7 +111,8 @@ func (f *StoreFSM) Restore(serialized io.ReadCloser) error {
 type StoreSnapshot struct {
 }
 
-/**
+/*
+*
 产生快照的时候调用，把当前所有的数据进行序列化备份
 */
 func (s *StoreSnapshot) Persist(sink raft.SnapshotSink) error {
@@ -115,14 +121,16 @@ func (s *StoreSnapshot) Persist(sink raft.SnapshotSink) error {
 	return nil
 }
 
-/**
+/*
+*
 Persist操作完成后调用
 */
 func (f *StoreSnapshot) Release() {
 	logger.Sugar.Infof("Snapshot Release!")
 }
 
-/**
+/*
+*
 执行命令
 */
 func (node *Node) Execute(cmd []byte) {
@@ -133,7 +141,8 @@ func (node *Node) Execute(cmd []byte) {
 	}
 }
 
-/**
+/*
+*
 最开始启动的节点，也是leader节点
 */
 func (node *Node) Start(bootstrap bool) {
@@ -152,14 +161,16 @@ func (node *Node) Start(bootstrap bool) {
 	}
 }
 
-/**
+/*
+*
 发送申请加入的请求
 */
 func (node *Node) ApplyJoin(address string) {
 
 }
 
-/**
+/*
+*
 先启动的节点收到申请加入的请求后，加一个新的节点，参数为新节点的地址
 */
 func (node *Node) Join(address string) {

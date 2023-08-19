@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-/**
+/*
+*
 defer trace("")()
 */
 func TraceDebug(msg string) func() {

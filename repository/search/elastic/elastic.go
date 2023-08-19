@@ -78,7 +78,8 @@ func (this *elasticSearchSession) Start() {
 	ElasticSearchSession.es = es
 }
 
-/**
+/*
+*
 显示客户端和服务端信息
 */
 func (this *elasticSearchSession) Info() {
@@ -101,7 +102,8 @@ func (this *elasticSearchSession) Info() {
 	logger.Sugar.Infof("Server: %s", info["version"].(map[string]interface{})["number"])
 }
 
-/**
+/*
+*
 创建索引的批量创建器
 */
 func (this *elasticSearchSession) newBulkIndexer(indexName string) esutil.BulkIndexer {
@@ -171,7 +173,8 @@ func (this *elasticSearchSession) Index(indexName string, mds ...interface{}) er
 	return err
 }
 
-/**
+/*
+*
 标准检索json ES query查询
 */
 func (this *elasticSearchSession) Query(indexName string, query string, from int, limit int) (map[string]interface{}, error) {

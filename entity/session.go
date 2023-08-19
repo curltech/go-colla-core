@@ -4,7 +4,8 @@ import (
 	"time"
 )
 
-/**
+/*
+*
 活动会话的数据
 */
 type Session struct {

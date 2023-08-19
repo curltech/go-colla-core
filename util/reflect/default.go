@@ -133,7 +133,7 @@ func IsSlice(obj interface{}) bool {
 	return false
 }
 
-//反射创建新对象。
+// 反射创建新对象。
 func New(target interface{}) interface{} {
 	t := reflect.TypeOf(target)
 	if t.Kind() == reflect.Ptr { //指针类型获取真正type需要调用Elem
@@ -223,7 +223,7 @@ func ToArray(entities interface{}) []interface{} {
 	return nil
 }
 
-//在入参的数组中创建并增加同类型的对象，并返回这个新增的对象指针
+// 在入参的数组中创建并增加同类型的对象，并返回这个新增的对象指针
 func Append(rowsSlicePtr interface{}) interface{} {
 	sliceValue := reflect.Indirect(reflect.ValueOf(rowsSlicePtr))
 	var isSlice = sliceValue.Kind() == reflect.Slice

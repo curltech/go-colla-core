@@ -23,25 +23,29 @@ type XormSession struct {
 
 var engine *xorm.Engine
 
-/**
+/*
+*
 如果结构体拥有 TableName() string 的成员方法，那么此方法的返回值即是该结构体对应的数据库表名
 // TableName 会将 User 的表名重写为 `profiles`
-func (User) TableName() string {
-  return "profiles"
-}
+
+	func (User) TableName() string {
+	  return "profiles"
+	}
+
 通过 engine.Table() 方法可以改变 struct 对应的数据库表的名称
 db.Table("deleted_users")
 通过 sturct 中 field 对应的 Tag 中使用 xorm:"'column_name'"
 可以使该 field 对应的 Column 名称为指定名称
 extends Person
-type User struct {
-	Id   int64
-	Name string  `xorm:"varchar(25) notnull unique 'usr_name' comment('姓名')"`
-	CreatedAt time.Time `xorm:"created"`
-	UpdatedAt time.Time `xorm:"updated"`
-	Version int `xorm:"version"`
-	DeletedAt time.Time `xorm:"deleted"`
-}
+
+	type User struct {
+		Id   int64
+		Name string  `xorm:"varchar(25) notnull unique 'usr_name' comment('姓名')"`
+		CreatedAt time.Time `xorm:"created"`
+		UpdatedAt time.Time `xorm:"updated"`
+		Version int `xorm:"version"`
+		DeletedAt time.Time `xorm:"deleted"`
+	}
 */
 func init() {
 	if config.DatabaseParams.Orm != "xorm" {
@@ -184,10 +188,10 @@ func (this *XormSession) Insert(mds ...interface{}) (int64, error) {
 	return affected, err
 }
 
-//第一个参数是更新的数据数组，当传入的为结构体指针时，只有非空和0的field才会被作为更新的字段
-//第二个参数指定要被更新的字段名称，即使非空和0的field也会被更新
-//不支持指定this.Session.Table(new(User))来指定表名，而是通过结构数组来指定，因此不支持map更新
-//在数据没有Id的时候，使用第三个参数条件bean作为条件
+// 第一个参数是更新的数据数组，当传入的为结构体指针时，只有非空和0的field才会被作为更新的字段
+// 第二个参数指定要被更新的字段名称，即使非空和0的field也会被更新
+// 不支持指定this.Session.Table(new(User))来指定表名，而是通过结构数组来指定，因此不支持map更新
+// 在数据没有Id的时候，使用第三个参数条件bean作为条件
 func (this *XormSession) Update(md interface{}, columns []string, conds string, params ...interface{}) (int64, error) {
 	var affected int64
 	var err error
@@ -231,9 +235,9 @@ func (this *XormSession) Update(md interface{}, columns []string, conds string, 
 	return affected, err
 }
 
-//第一个参数是删除的数据数组，当传入的为结构体指针时，非空和0的field会被作为删除的条件
-//不支持指定this.Session.Table(new(User))来指定表名，而是通过结构数组来指定，因此不支持map删除
-//在数据没有Id的时候，使用第二个参数作为条件
+// 第一个参数是删除的数据数组，当传入的为结构体指针时，非空和0的field会被作为删除的条件
+// 不支持指定this.Session.Table(new(User))来指定表名，而是通过结构数组来指定，因此不支持map删除
+// 在数据没有Id的时候，使用第二个参数作为条件
 func (this *XormSession) Delete(md interface{}, conds string, params ...interface{}) (int64, error) {
 	var affected int64 = 0
 	var err error
@@ -270,7 +274,7 @@ func (this *XormSession) Delete(md interface{}, conds string, params ...interfac
 	return affected, err
 }
 
-//execute sql and get result
+// execute sql and get result
 func (this *XormSession) Exec(clause string, params ...interface{}) (sql.Result, error) {
 	var sqlOrArgs = make([]interface{}, 0)
 	sqlOrArgs = append(sqlOrArgs, clause)
@@ -286,7 +290,7 @@ func (this *XormSession) Exec(clause string, params ...interface{}) (sql.Result,
 	return result, err
 }
 
-//execute sql and get result
+// execute sql and get result
 func (this *XormSession) Query(clause string, params ...interface{}) ([]map[string][]byte, error) {
 	var sqlOrArgs = make([]interface{}, 0)
 	sqlOrArgs = append(sqlOrArgs, clause)
@@ -317,14 +321,16 @@ func (this *XormSession) Count(bean interface{}, conds string, params ...interfa
 	return count, err
 }
 
-/**
-	Transaction 的 f 参数类型为 一个在事务内处理的函数
-    因此可以将 f 函数作为参数传入 Transaction 函数中。
-    return Transaction(func(s *XormSession) error {
-        if _,error := session.Insert(User{ID:5,Version:"abc"}); error != nil{
-            return error
-        }
-	})
+/*
+*
+
+		Transaction 的 f 参数类型为 一个在事务内处理的函数
+	    因此可以将 f 函数作为参数传入 Transaction 函数中。
+	    return Transaction(func(s *XormSession) error {
+	        if _,error := session.Insert(User{ID:5,Version:"abc"}); error != nil{
+	            return error
+	        }
+		})
 */
 func (this *XormSession) Transaction(fc func(s repository.DbSession) error) error {
 	defer this.Close()
@@ -389,7 +395,7 @@ func (this *XormSession) Close() error {
 	return err
 }
 
-//scan result
+// scan result
 func (this *XormSession) Scan(dest interface{}) (*XormSession, error) {
 	rows, err := this.Session.Rows(dest)
 	if err != nil {
