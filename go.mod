@@ -9,7 +9,7 @@ require (
 	github.com/boltdb/bolt v1.3.1
 	github.com/cenkalti/backoff/v4 v4.0.2
 	github.com/dustin/go-humanize v1.0.0
-	github.com/elastic/go-elasticsearch/v8 v8.0.0-20200929065430-35fd8bce1107
+	github.com/elastic/go-elasticsearch/v8 v8.9.0
 	github.com/emersion/go-imap v1.0.6
 	github.com/emersion/go-message v0.14.1
 	github.com/emersion/go-msgauth v0.6.4
@@ -57,6 +57,7 @@ require (
 	github.com/btcsuite/btcd v0.20.1-beta // indirect
 	github.com/cloudflare/circl v1.1.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
+	github.com/elastic/elastic-transport-go/v8 v8.0.0-20230329154755-1a3c63de0db6 // indirect
 	github.com/emersion/go-textwrapper v0.0.0-20200911093747-65d896831594 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/goccy/go-json v0.8.1 // indirect
