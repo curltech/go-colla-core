@@ -30,7 +30,6 @@ require (
 	github.com/panjf2000/ants/v2 v2.10.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/satori/go.uuid v1.2.0
-	github.com/streadway/amqp v1.1.0
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 	github.com/xwb1989/sqlparser v0.0.0-20180606152119-120387863bf2
 	go.uber.org/zap v1.27.0
@@ -46,6 +45,7 @@ require (
 	github.com/libp2p/go-libp2p v0.38.1
 	github.com/robfig/cron v1.2.0
 	github.com/rqlite/rqlite v4.6.0+incompatible
+	github.com/streadway/amqp v1.1.0
 )
 
 require (
