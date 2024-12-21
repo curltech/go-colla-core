@@ -46,8 +46,6 @@ func (this *SessionService) NewEntities(data []byte) (interface{}, error) {
 	}
 
 	return &entities, err
-
-	return &entities, nil
 }
 
 func init() {
