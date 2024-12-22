@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"reflect"
 	"strconv"
@@ -35,7 +35,7 @@ func parseYAML(filename string) map[string]interface{} {
 	}
 
 	// read the raw contents of the file
-	data, err := ioutil.ReadFile(yamlAbsPath)
+	data, err := os.ReadFile(yamlAbsPath)
 	if err != nil {
 		panic(err)
 	}
@@ -59,21 +59,21 @@ func init() {
 	appname := flag.String("appname", "", "app name")
 	flag.Parse()
 	if len(*appname) == 0 {
-		appName = "peer1"
+		appName = "peer"
 	} else {
 		appName = *appname
 	}
 
 	// 读取应用配置
 	filename := prefix + appName + suffix
-	_, err := ioutil.ReadFile(filename)
+	_, err := os.ReadFile(filename)
 	if err != nil {
 		panic(fmt.Sprintf("file does not exist: %v, %v", filename, err))
 	} else {
 		parseYAML(filename)
 	}
 	filename = prefix + "iris" + suffix
-	_, err = ioutil.ReadFile(filename)
+	_, err = os.ReadFile(filename)
 	if err != nil {
 		fmt.Errorf("file does not exist: %v, %v", filename, err)
 	} else {
