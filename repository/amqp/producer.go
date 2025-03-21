@@ -2,7 +2,7 @@ package amqp
 
 import (
 	"github.com/curltech/go-colla-core/logger"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type Producer struct {
