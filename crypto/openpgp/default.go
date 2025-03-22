@@ -93,7 +93,7 @@ func LoadPrivateKey(keyValue interface{}, password string) (*crypto.Key, error) 
 			if locked, _ := privateKey.IsLocked(); locked {
 				privateKey, err = privateKey.Unlock([]byte(password))
 				if err != nil {
-					panic(err)
+					return nil, err
 				}
 			}
 
@@ -109,7 +109,7 @@ func LoadPrivateKey(keyValue interface{}, password string) (*crypto.Key, error) 
  *
  * @return
  */
-func GenerateKeyPair(keyType string, passphrase []byte, name string, email string) (keypair interface{}, err error) {
+func GenerateKeyPair(keyType string, passphrase []byte, name string, email string) (keypair *crypto.Key, err error) {
 	if name == "" {
 		name, _ = config.GetString("server.name")
 	}
@@ -131,6 +131,8 @@ func GenerateKeyPair(keyType string, passphrase []byte, name string, email strin
 		keyGenHandle = pgpCryptoRefresh.KeyGeneration().AddUserId(name, email).New()
 		keypair, err = keyGenHandle.GenerateKeyWithSecurity(constants.HighSecurity)
 	}
+	pgp := crypto.PGP()
+	keypair, err = pgp.LockKey(keypair, passphrase)
 
 	return keypair, err
 }
