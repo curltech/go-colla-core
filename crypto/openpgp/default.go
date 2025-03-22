@@ -51,12 +51,11 @@ func LoadPublicKey(keyValue interface{}) (*crypto.Key, error) {
 	if _, ok := keyValue.(*crypto.Key); ok {
 		publicKey = keyValue.(*crypto.Key)
 	}
-	//bytePublicKey, err = publicKey.GetPublicKey()
 	if _, ok := keyValue.([]byte); ok {
 		bytePublicKey = keyValue.([]byte)
 		publicKey, err = crypto.NewKey(bytePublicKey)
 	}
-	if err == nil {
+	if err == nil && publicKey != nil {
 		if !publicKey.IsPrivate() {
 			return publicKey, nil
 		} else {
@@ -110,10 +109,7 @@ func LoadPrivateKey(keyValue interface{}, password string) (*crypto.Key, error) 
  *
  * @return
  */
-func GenerateKeyPair(keyType string, passphrase []byte, name string, email string) interface{} {
-	var keypair interface{}
-	var err error
-
+func GenerateKeyPair(keyType string, passphrase []byte, name string, email string) (keypair interface{}, err error) {
 	if name == "" {
 		name, _ = config.GetString("server.name")
 	}
@@ -127,36 +123,29 @@ func GenerateKeyPair(keyType string, passphrase []byte, name string, email strin
 	keyGenHandle := pgp4880.KeyGeneration().AddUserId(name, email).New()
 
 	if keyType == "RSA" {
-
-		// RSA, Key struct
 		keypair, err = keyGenHandle.GenerateKeyWithSecurity(constants.HighSecurity)
 	} else if keyType == "Ed25519" || keyType == "x25519" {
 		keyGenHandle = pgpDefault.KeyGeneration().AddUserId(name, email).New()
-
 		keypair, err = keyGenHandle.GenerateKey()
 	} else {
 		keyGenHandle = pgpCryptoRefresh.KeyGeneration().AddUserId(name, email).New()
-
 		keypair, err = keyGenHandle.GenerateKeyWithSecurity(constants.HighSecurity)
 	}
-	if err != nil {
-		panic(err)
-	}
-	return keypair
+
+	return keypair, err
 }
 
-func GetPrivateKey(keyPair *crypto.Key, password []byte) *crypto.Key {
-	var err error
+func GetPrivateKey(keyPair *crypto.Key, password []byte) (key *crypto.Key, err error) {
 	if keyPair.IsPrivate() {
 		if !keyPair.IsExpired(time.Now().Unix()) {
 			locked, err := keyPair.IsLocked()
 			if err != nil {
-				panic(err)
+				return nil, err
 			}
 			if locked {
 				_, err := keyPair.Unlock(password)
 				if err != nil {
-					return nil
+					return nil, err
 				}
 				defer keyPair.ClearPrivateParams()
 			}
@@ -167,54 +156,44 @@ func GetPrivateKey(keyPair *crypto.Key, password []byte) *crypto.Key {
 		err = errors.New("")
 	}
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return keyPair
+	return keyPair, nil
 }
 
-func GetPublicKey(keyPair *crypto.Key) (key *crypto.Key) {
+func GetPublicKey(keyPair *crypto.Key) (key *crypto.Key, err error) {
 	b, err := keyPair.GetPublicKey()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	key, err = crypto.NewKey(b)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return key
+	return key, nil
 }
 
-func BytePublicKey(key *crypto.Key) []byte {
-	bs, err := key.GetPublicKey()
-	if err != nil {
-		panic(err)
-	}
-
-	return bs
+func BytePublicKey(key *crypto.Key) (bs []byte, err error) {
+	return key.GetPublicKey()
 }
 
-func BytePrivateKey(key *crypto.Key, password []byte) []byte {
+func BytePrivateKey(key *crypto.Key, password []byte) (bs []byte, err error) {
 	pgp := crypto.PGP()
 	if key.IsPrivate() {
 		unlocked, err := key.IsUnlocked()
 		if err != nil {
-
+			return nil, err
 		} else if unlocked {
 			key, err = pgp.LockKey(key, password)
 			if err != nil {
-				panic(err)
+				return nil, err
 			}
 		}
 	}
 
-	bs, err := key.Serialize()
-	if err != nil {
-		panic(err)
-	}
-
-	return bs
+	return key.Serialize()
 }
 
 /**
@@ -225,20 +204,17 @@ func BytePrivateKey(key *crypto.Key, password []byte) []byte {
  * @return 加密后的数据
  * @throws EncryptException
  */
-func Encrypt(key *crypto.Key, plaintext []byte) (ciphertext []byte) {
-	var err error
+func Encrypt(key *crypto.Key, plaintext []byte) (ciphertext []byte, err error) {
 	pgp := crypto.PGP()
 	encHandle, err := pgp.Encryption().Recipient(key).New()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	pgpMessage, err := encHandle.Encrypt(plaintext)
-	ciphertext, err = pgpMessage.ArmorBytes()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-
-	return ciphertext
+	return pgpMessage.ArmorBytes()
 }
 
 /**
@@ -249,21 +225,20 @@ func Encrypt(key *crypto.Key, plaintext []byte) (ciphertext []byte) {
  * @return 解密后的明文
  * @throws EncryptException
  */
-func Decrypt(key *crypto.Key, ciphertext []byte) []byte {
-	var err error
+func Decrypt(key *crypto.Key, ciphertext []byte) (decrypted []byte, err error) {
 	pgp := crypto.PGP()
 	decHandle, err := pgp.Decryption().DecryptionKey(key).New()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	decrypted, err := decHandle.Decrypt(ciphertext, crypto.Armor)
+	result, err := decHandle.Decrypt(ciphertext, crypto.Armor)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	decHandle.ClearPrivateParams()
 
-	return decrypted.Bytes()
+	return result.Bytes(), nil
 }
 
 /**
@@ -274,23 +249,18 @@ func Decrypt(key *crypto.Key, ciphertext []byte) []byte {
  * @return 加密后的数据
  * @throws EncryptException
  */
-func EncryptSymmetrical(password []byte, plaintext []byte) []byte {
-	var err error
+func EncryptSymmetrical(password []byte, plaintext []byte) (armored []byte, err error) {
 	pgp := crypto.PGP()
 	// Encrypt data with a password
 	encHandle, err := pgp.Encryption().Password(password).New()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	pgpMessage, err := encHandle.Encrypt(plaintext)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	armored, err := pgpMessage.ArmorBytes()
-	if err != nil {
-		panic(err)
-	}
-	return armored
+	return pgpMessage.ArmorBytes()
 }
 
 /**
@@ -301,58 +271,69 @@ func EncryptSymmetrical(password []byte, plaintext []byte) []byte {
  * @return 解密后的明文
  * @throws EncryptException
  */
-func DecryptSymmetrical(password []byte, ciphertext []byte) []byte {
-	var err error
+func DecryptSymmetrical(password []byte, ciphertext []byte) (decrypted []byte, err error) {
 	pgp := crypto.PGP()
 	decHandle, err := pgp.Decryption().Password(password).New()
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	decrypted, err := decHandle.Decrypt(ciphertext, crypto.Auto)
+	result, err := decHandle.Decrypt(ciphertext, crypto.Auto)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return decrypted.Bytes()
+	return result.Bytes(), nil
 }
 
-func ValidateKey(keyPair *crypto.Key, password []byte) bool {
-	unlockedKey := GetPrivateKey(keyPair, password)
-
-	isVerified, _ := unlockedKey.Check()
-	if !isVerified {
-		return false
+func ValidateKey(keyPair *crypto.Key, password []byte) (result bool, err error) {
+	_, err = GetPrivateKey(keyPair, password)
+	if err != nil {
+		return false, err
 	}
 
-	return true
+	return true, nil
 }
 
-func Sign(key *crypto.Key, plaintext []byte) (ciphertext []byte, err error) {
+func Sign(key *crypto.Key, plaintext []byte) (signature []byte, err error) {
 	pgp := crypto.PGP()
-	signer, err := pgp.Sign().SigningKey(key).New()
-	ciphertext, err = signer.Sign(plaintext, crypto.Auto)
+	signer, err := pgp.Sign().SigningKey(key).Detached().New()
+	if err != nil {
+		return nil, err
+	}
+	signature, err = signer.Sign(plaintext, crypto.Armor)
 	signer.ClearPrivateParams()
+
 	return
 }
 
-func Verify(publicKey *crypto.Key, ciphertext []byte) (success bool, err error) {
+func Verify(publicKey *crypto.Key, data []byte, signature []byte) (success bool, err error) {
 	pgp := crypto.PGP()
 	verifier, err := pgp.Verify().VerificationKey(publicKey).New()
-	verifyResult, err := verifier.VerifyInline(ciphertext, crypto.Auto)
-	if sigErr := verifyResult.SignatureError(); sigErr == nil {
-		return true, nil
+	if err != nil {
+		return false, err
 	}
-
-	return false, err
+	verifyResult, err := verifier.VerifyDetached(data, signature, crypto.Armor)
+	if err != nil {
+		return false, err
+	}
+	err = verifyResult.SignatureError()
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
-func WritePublicKey(publicKey *crypto.Key) string {
-	b := BytePublicKey(publicKey)
-
-	return std.EncodeBase64(b)
+func EncryptKey(key []byte, publicKey *crypto.Key) (ciphertext []byte, err error) {
+	return Encrypt(publicKey, key)
 }
 
-func WritePrivateKey(privateKey *crypto.Key, password []byte) string {
-	b := BytePrivateKey(privateKey, password)
+func DecryptKey(keyValue []byte, privateKey *crypto.Key) (decrypted []byte, err error) {
+	return Decrypt(privateKey, keyValue)
+}
 
-	return std.EncodeBase64(b)
+func WritePublicKey(publicKey *crypto.Key) (base64 string, err error) {
+	bs, err := BytePublicKey(publicKey)
+	if err != nil {
+		return "", err
+	}
+	return std.EncodeBase64(bs), nil
 }
